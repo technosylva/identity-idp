@@ -18,12 +18,13 @@ module Users
     end
 
     def edit
-      result = PasswordResetTokenValidator.new(token_user(params)).submit
+      result = PasswordResetTokenValidator.new(token_user).submit
 
       analytics.track_event(Analytics::PASSWORD_RESET_TOKEN, result.to_h)
 
       if result.success?
         @reset_password_form = ResetPasswordForm.new(build_user)
+        @forbidden_passwords = ForbiddenPasswords.new(token_user.email).call
       else
         handle_invalid_or_expired_token(result)
       end
@@ -48,17 +49,25 @@ module Users
 
     protected
 
+    def email_params
+      params.require(:password_reset_email_form).permit(:email, :resend, :request_id)
+    end
+
     def email
-      params[:password_reset_email_form][:email]
+      email_params[:email]
+    end
+
+    def request_id
+      email_params[:request_id]
     end
 
     def handle_valid_email
-      RequestPasswordReset.new(email).perform
+      RequestPasswordReset.new(email, request_id).perform
 
       session[:email] = email
-      resend_confirmation = params[:password_reset_email_form][:resend]
+      resend_confirmation = email_params[:resend]
 
-      redirect_to forgot_password_url(resend: resend_confirmation)
+      redirect_to forgot_password_url(resend: resend_confirmation, request_id: request_id)
     end
 
     def handle_invalid_or_expired_token(result)
@@ -74,7 +83,7 @@ module Users
       user
     end
 
-    def token_user(params)
+    def token_user
       @_token_user ||= User.with_reset_password_token(params[:reset_password_token])
     end
 

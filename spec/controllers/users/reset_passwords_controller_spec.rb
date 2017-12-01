@@ -55,6 +55,11 @@ describe Users::ResetPasswordsController, devise: true do
         user = instance_double('User', uuid: '123')
         allow(User).to receive(:with_reset_password_token).with('foo').and_return(user)
         allow(user).to receive(:reset_password_period_valid?).and_return(true)
+        expect(user).to receive(:email).twice
+
+        forbidden = instance_double(ForbiddenPasswords)
+        allow(ForbiddenPasswords).to receive(:new).with(user.email).and_return(forbidden)
+        expect(forbidden).to receive(:call)
 
         get :edit, params: { reset_password_token: 'foo' }
 
@@ -255,8 +260,7 @@ describe Users::ResetPasswordsController, devise: true do
 
   describe '#create' do
     context 'no user matches email' do
-      it 'redirects to forgot_password_path to prevent revealing account existence ' \
-        'and tracks event using nonexistent user' do
+      it 'send an email to tell the user they do not have an account yet' do
         stub_analytics
 
         analytics_hash = {
@@ -274,7 +278,7 @@ describe Users::ResetPasswordsController, devise: true do
           put :create, params: {
             password_reset_email_form: { email: 'nonexistent@example.com' },
           }
-        end.to_not(change { ActionMailer::Base.deliveries.count })
+        end.to(change { ActionMailer::Base.deliveries.count }.by(1))
 
         expect(response).to redirect_to forgot_password_path
       end
@@ -402,6 +406,20 @@ describe Users::ResetPasswordsController, devise: true do
 
         expect(response).to render_template :new
       end
+    end
+
+    it 'renders new if email is nil' do
+      expect do
+        post :create, params: { password_reset_email_form: { resend: false } }
+      end.to change { ActionMailer::Base.deliveries.count }.by(0)
+
+      expect(response).to render_template :new
+    end
+
+    it 'renders new if email is a Hash' do
+      post :create, params: { password_reset_email_form: { email: { foo: 'bar' } } }
+
+      expect(response).to render_template(:new)
     end
   end
 

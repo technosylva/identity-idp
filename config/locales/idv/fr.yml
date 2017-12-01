@@ -10,7 +10,6 @@ fr:
       mail:
         resend: Envoyer une autre lettre
         send: Envoyer une lettre
-      return_to_account: NOT TRANSLATED YET
       send_confirmation_code: NOT TRANSLATED YET
     cancel:
       modal_header: Souhaitez-vous vraiment annuler?
@@ -26,14 +25,10 @@ fr:
     errors:
       bad_dob: Votre date de naissance doit être une date valide.
       duplicate_ssn: Un compte existe déjà avec l'information que vous avez fournie.
-      finance_number_length: Le nombre doit comprendre entre %{minimum} et %{maximum}
         chiffres.
       hardfail: Nous sommes dans l'incapacité de vérifier votre identité pour le moment.
       incorrect_password: Le mot de passe que vous avez inscrit est incorrect.
-      invalid_ccn: Vous devez inscrire seulement les 8 derniers chiffres du numéro
-        de carte de crédit.
       mail_limit_reached: Vous avez demandé trop de lettres au cours du dernier mois.
-      missing_finance: Vous devez fournir un numéro de compte bancaire.
       pattern_mismatch:
         dob: 'Votre date de naissance doit être inscrite de cette façon: mm/jj/aaaa'
         personal_key: 'Veuillez inscrire votre clé personnelle pour ce compte, par
@@ -41,34 +36,40 @@ fr:
         ssn: 'Votre numéro de sécurité sociale doit être inscrit de cette façon :
           ###-##-####'
         zipcode: 'Votre code ZIP doit être inscrit de cette façon : #####-####'
+      unsupported_jurisdiction: Désolé, nous ne pouvons pas vérifier les personnes
+        de cet état.
+      unsupported_jurisdiction_sp: Veuillez visiter %{sp_name} pour accéder à votre
+        compte.
     form:
-      activate_by_mail: Activer mon compte par la poste.
+      activate_by_mail: obtenez un code par lettre.
       address1: Adresse 1
       address2: Adresse 2 (optional)
-      auto_loan: Numéro du prêt automobile
-      ccn: Les 8 derniers chiffres d'une carte de crédit
       city: Ville
       dob: Date de naissance
       dob_hint: 'exemple : 01/17/1964'
       first_name: Prénom
-      home_equity_line: Numéro du compte de crédit hypothécaire
       last_name: Nom de famille
-      mortgage: Numéro du compte de prêt hypothécaire
-      no_alternate_phone_html: Je n'ai pas de numéro de téléphone. %{link}
+      no_alternate_phone_html: Si vous n'avez pas d'autre numéro de téléphone, %{link}
       password: Mot de passe
       personal_details: Information personnelle
       phone: Numéro de téléphone
       phone_label_aside: Ligne mobile ou fixe
       previous_address_add: Inscrire votre adresse précédente
       previous_address_html: Avez-vous déménagé au cours des strong3 derniers mois/strong?
-      select_financial_account: Sélectionnez un compte bancaire…
       ssn_label_html: Numéro de sécurité sociale %{tooltip}
       state: État
-      use_ccn: Fournissez un numéro de carte de crédit
-      use_financial_account: Vous n'avez pas de carte de crédit?
+      state_id: NOT TRANSLATED YET
+      state_id_type:
+        drivers_license: NOT TRANSLATED YET
+        drivers_permit: NOT TRANSLATED YET
+        state_id_card: NOT TRANSLATED YET
+      state_id_type_label: Type de numéro d'identification
       zipcode: Code ZIP
     index:
       continue_link: Oui, continuer
+      id:
+        need_html: Si vous créez un compte, vous aurez besoin d'un <strong>identifiant
+          actuel émis par l'état</strong>.
       paragraph_1: Nous avons un partenariat avec une entreprise de confiance afin
         de vérifier cette information ainsi que votre identité.
       prompt: Est-ce que vous avez accès à toute cette information en ce moment?
@@ -108,6 +109,7 @@ fr:
         financières pour compléter ce processus. Si vous n'avez pas cette information
         sous la main, vous pouvez continuer plus tard.
       come_back_later: NOT TRANSLATED YET
+      come_back_later_no_sp_html: NOT TRANSLATED YET
       come_back_later_sp_html: NOT TRANSLATED YET
       confirm: Vous avez crypté vos données vérifiées
       dupe_ssn1: Si vous recevez ce message d'erreur, il est possible que vous ayez
@@ -115,30 +117,17 @@ fr:
       dupe_ssn2_html: Veuillez %{link} avec l'adresse courriel que vous avez utilisée
         originalement.
       dupe_ssn2_link: déconnectez-vous puis connectez-vous à nouveau
-      finance:
-        disclaimer: En continuant, vous acceptez que %{app_name} compare l'information
-          du compte que vous avez fournie avec des sources tiers afin de vérifier
-          votre identité.
-        hint: Vous pouvez utiliser Mastercard, Visa, Diner's Club, ou JCB.
-        intro_account: Aidez-nous à vérifier votre identité en fournissant le numéro
-          de votre prêt automobile, de votre prêt hypothécaire, ou de votre crédit
-          hypothécaire.
-        intro_ccn_help: comment votre information sera utilisée
-        intro_ccn_html: Aidez-nous à vérifier votre identité en fournissant les 8
-          derniers chiffres de votre carte de crédit. Suivez ce lien pour en apprendre
-          davantage %{intro_help_link}.
-        no_account: Vous préférez utiliser une carte de crédit?
-        no_account_info: Aidez-nous à vérifier votre identité en fournissant les 8
-          derniers chiffres de votre carte de crédit.
       hardfail: NOT TRANSLATED YET
       hardfail4_html: NOT TRANSLATED YET
-      help_center: Visitez notre Centre d'aide pour en apprendre davantage sur la
-        façon dont nous vérifions votre compte.
+      help_center_html: Visitez notre <strong>Centre d'aide</strong> pour en apprendre
+        davantage sur la façon dont nous vérifions votre compte.
+      id_number: Entrez un numéro d'identification d'état ou un numéro de permis de
+        conduire valide. Le nom, la date de naissance et l'adresse de votre ID <strong>doivent</strong>
+        correspondent les informations fournies ci-dessus.
       loading: NOT TRANSLATED YET
       mail_sent: Votre lettre est en route
       otp_delivery_method:
         phone_number_html: NOT TRANSLATED YET
-      personal_details_verified: Information personnelle vérifiée!
       personal_key: Il s'agit de votre nouvelle clé personnelle. Notez-la et conservez-la
         dans un endroit sécuritaire. Vous en aurez besoin si vous perdez votre mot
         de passe.
@@ -148,7 +137,7 @@ fr:
         intro: Le seul numéro de téléphone auquel nous pouvons envoyer un code de
           confirmation est celui qui est lié à votre identité légale.
         phone_of_record: numéro de téléphone enregistré
-        prepaid: avec un contrat, et non prépayé
+        prepaid: et non prépayé
         same_as_2fa: Ce numéro de téléphone peut être le même que celui que vous utilisez
           pour configurer votre mot de passe à usage unique, tant et aussi longtemps
           qu'il respecte les critères mentionnés plus haut.
@@ -156,7 +145,6 @@ fr:
       return_to_profile: NOT TRANSLATED YET
       return_to_sp_html: NOT TRANSLATED YET
       review:
-        financial_info: Où se trouve l'information sur mon compte bancaire?
         info_verified_html: Nous avons trouvé des données qui correspondent à votre
           %{phone_message}
         intro: Vos informations vérifiées
@@ -167,10 +155,25 @@ fr:
         à l'identité, votre profil ne sera pas activé tant que vous n'aurez pas entré
         votre code de confirmation.
       sessions:
+        access_sp: "<strong>%{sp_name}</strong> ne nécessite que <em>que vous</em>
+          accéder à vos avantages."
         no_pii: N'utilisez pas de véritables données personnelles (il s'agit d'une
           démonstration seulement)
         pii: Information personnelle
+        review_message: Lorsque vous entrez votre mot de passe, login.gov sécurise
+          vos informations personnelles. Nous faisons cela pour nous assurer que personne
+          d'autre ne puisse accéder à vos informations.
         success: Nous avons trouvé des données qui correspondent à %{pii_message}
+      state_id_accordion_header: Que faire si je n'ai pas de numéro d'identification
+        valide?
+      state_id_accordion_message: "Vous devez fournir un numéro d'identification valide
+        pour continuer à vérifier en ligne. \nIl ne peut pas être expiré. Le nom,
+        la date de naissance et l'adresse de votre pièce \nd'identité doivent correspondre
+        aux informations que vous avez fournies ci-dessus.\n\nSi vous avez récemment
+        déménagé et que l'adresse figurant sur votre carte d'identité \nne correspond
+        pas à votre adresse officielle actuelle, nous ne pouvons pas vous \nconfirmer
+        en ligne pour le moment.\n\nSi vous n'avez pas de numéro d'identification
+        valide, retournez à %{sp} pour accéder \nà vos avantages."
       usps:
         bad_address: Je ne peux pas recevoir de courrier à cette adresse
         byline: Nous posterons une lettre à l'adresse vérifiée dans nos dossiers.
@@ -187,14 +190,6 @@ fr:
         fail: OK
         jobfail: Essayez à nouveau demain
         warning: Essayez à nouveau
-      financials:
-        fail: Votre compte est strongverrouillé pour 24 heures/strong au cours desquelles
-          vous ne pourrez pas y accéder. Consultez notre Centre d'aide pour plus d'information
-          sur la vérification de votre identité.
-        heading: Nous ne trouvons pas de données qui correspondent à vos données financières.
-        jobfail: NOT TRANSLATED YET
-        timeout: NOT TRANSLATED YET
-        warning: Veuillez vérifier l'information que vous avez fournie.
       phone:
         fail: Votre compte est strongverrouillé pour 24 heures/strong au cours desquelles
           vous ne pourrez pas y accéder. Consultez notre Centre d'aide pour plus d'information
@@ -227,8 +222,7 @@ fr:
       dupe: 'Erreur: un compte existe déjà'
       expectations: Ensuite, aidez-vous à vous identifier
       fail: Nous sommes dans l'incapacité de vérifier votre identité pour le moment
-      financials: Veuillez fournir un numéro de compte bancaire
-      hardfail: Nous sommes dans l'incapacité de vérifier votre identité
+      hardfail: Nous sommes dans l'incapacité de vérifier votre identité avec %{app}
       intro: Aidez-nous à vous identifier
       mail:
         resend: Vous voulez une autre lettre?
@@ -240,4 +234,4 @@ fr:
       session:
         phone: Obtenez un code par téléphone
         review: Encryptez vos données personnelles en entrant votre mot de passe
-      sessions: D'abord, dites-nous qui vous êtes
+      sessions: Vérifier votre identité

@@ -4,13 +4,13 @@ module Users
 
     def edit
       @update_user_password_form = UpdateUserPasswordForm.new(current_user)
+      @forbidden_passwords = ForbiddenPasswords.new(current_user.email).call
     end
 
     def update
-      @update_user_password = UpdateUserPassword.new(
-        user: current_user, user_session: user_session, password: user_params[:password]
-      )
-      result = @update_user_password.call
+      @update_user_password_form = UpdateUserPasswordForm.new(current_user, user_session)
+
+      result = @update_user_password_form.submit(user_params)
 
       analytics.track_event(Analytics::PASSWORD_CHANGED, result.to_h)
 
@@ -30,7 +30,7 @@ module Users
     def handle_success
       bypass_sign_in current_user
 
-      flash[:personal_key] = @update_user_password.personal_key
+      flash[:personal_key] = @update_user_password_form.personal_key
       redirect_to account_url, notice: t('notices.password_changed')
     end
   end

@@ -7,11 +7,8 @@ shared_examples 'selecting usps address verification method' do |sp|
     click_idv_begin
     fill_out_idv_form_ok
     click_idv_continue
-    fill_out_financial_form_ok
-    click_idv_continue
 
     click_idv_address_choose_usps
-
     click_on t('idv.buttons.mail.send')
 
     expect(current_path).to eq verify_review_path
@@ -19,7 +16,7 @@ shared_examples 'selecting usps address verification method' do |sp|
 
     fill_in :user_password, with: user_password
 
-    expect { click_submit_default }.
+    expect { click_continue }.
       to change { UspsConfirmation.count }.from(0).to(1)
 
     expect(current_path).to eq verify_confirmations_path
@@ -41,7 +38,7 @@ shared_examples 'selecting usps address verification method' do |sp|
     expect(current_path).to eq(verify_come_back_later_path)
 
     if sp == :saml
-      expect(page).to have_link(t('idv.buttons.return_to_account'))
+      expect(page).to have_link(t('idv.buttons.continue_plain'))
       expect(usps_confirmation_entry.issuer).
         to eq('https://rp1.serviceprovider.com/auth/saml/metadata')
     elsif sp == :oidc
@@ -91,11 +88,9 @@ shared_examples 'selecting usps address verification method' do |sp|
     click_idv_begin
     fill_out_idv_form_ok
     click_idv_continue
-    fill_out_financial_form_ok
-    click_idv_continue
     click_idv_address_choose_usps
     click_on t('idv.buttons.mail.send')
     fill_in :user_password, with: user_password
-    click_submit_default
+    click_continue
   end
 end

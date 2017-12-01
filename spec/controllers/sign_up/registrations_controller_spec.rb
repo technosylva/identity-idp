@@ -16,6 +16,8 @@ describe SignUp::RegistrationsController, devise: true do
     it 'cannot be viewed by signed in users' do
       stub_sign_in
 
+      subject.session[:sp] = { request_url: 'http://test.com' }
+
       get :new
 
       expect(response).to redirect_to account_path
@@ -46,6 +48,7 @@ describe SignUp::RegistrationsController, devise: true do
           errors: {},
           email_already_exists: false,
           user_id: user.uuid,
+          domain_name: 'example.com',
         }
 
         expect(@analytics).to have_received(:track_event).
@@ -81,6 +84,7 @@ describe SignUp::RegistrationsController, devise: true do
         errors: {},
         email_already_exists: true,
         user_id: existing_user.uuid,
+        domain_name: 'example.com',
       }
 
       expect(@analytics).to receive(:track_event).
@@ -98,12 +102,31 @@ describe SignUp::RegistrationsController, devise: true do
         errors: { email: [t('valid_email.validations.email.invalid')] },
         email_already_exists: false,
         user_id: 'anonymous-uuid',
+        domain_name: 'invalid',
       }
 
       expect(@analytics).to receive(:track_event).
         with(Analytics::USER_REGISTRATION_EMAIL, analytics_hash)
 
       post :create, params: { user: { email: 'invalid@', request_id: '' } }
+    end
+
+    it 'renders new if email is nil' do
+      post :create, params: { user: { request_id: '123789' } }
+
+      expect(response).to render_template(:new)
+    end
+
+    it 'renders new if email is a Hash' do
+      put :create, params: { user: { email: { foo: 'bar' } } }
+
+      expect(response).to render_template(:new)
+    end
+
+    it 'renders new if request_id is blank' do
+      post :create, params: { user: { email: 'invalid@' } }
+
+      expect(response).to render_template(:new)
     end
   end
 

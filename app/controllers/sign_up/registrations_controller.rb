@@ -32,11 +32,13 @@ module SignUp
       end
     end
 
+    def destroy_confirm; end
+
     protected
 
     def require_no_authentication
       return unless current_user
-      redirect_to after_sign_in_path_for(current_user)
+      redirect_to signed_in_url
     end
 
     def permitted_params
@@ -56,8 +58,7 @@ module SignUp
     end
 
     def sp_request_id
-      request_id = permitted_params.fetch(:request_id)
-      return if request_id.empty?
+      request_id = permitted_params.fetch(:request_id, '')
 
       ServiceProviderRequest.from_uuid(request_id).uuid
     end

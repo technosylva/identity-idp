@@ -26,6 +26,8 @@ RSpec.describe OpenidConnect::AuthorizationController do
 
       context 'with valid params' do
         it 'redirects back to the client app with a code' do
+          IdentityLinker.new(user, client_id).link_identity(ial: 1)
+          user.identities.last.update!(verified_attributes: ["given_name", "family_name", "birthdate"])
           action
 
           expect(response).to redirect_to(/^#{params[:redirect_uri]}/)
@@ -54,6 +56,8 @@ RSpec.describe OpenidConnect::AuthorizationController do
             let(:user) { create(:profile, :active, :verified).user }
 
             it 'redirects to the redirect_uri immediately' do
+              IdentityLinker.new(user, client_id).link_identity(ial: 3)
+              user.identities.last.update!(verified_attributes: ["given_name", "family_name", "birthdate"])
               action
 
               expect(response).to redirect_to(/^#{params[:redirect_uri]}/)
@@ -68,21 +72,41 @@ RSpec.describe OpenidConnect::AuthorizationController do
           end
         end
 
+        context 'user has not approved this application' do
+          it 'redirects verify shared attributes page' do
+            action
+
+            expect(response).to redirect_to(sign_up_completed_url)
+          end
+
+          it 'links identity to the user' do
+            action
+            sp = user.identities.last.service_provider
+            expect(sp).to eq(params[:client_id])
+          end
+        end
+
         context 'user has already approved this application' do
           before do
             IdentityLinker.new(user, client_id).link_identity
+            user.identities.last.update!(verified_attributes: ["given_name", "family_name", "birthdate"])
           end
 
-          it 'redirects to the redirect_uri immediately' do
+          it 'redirects back to the client app with a code' do
             action
 
             expect(response).to redirect_to(/^#{params[:redirect_uri]}/)
+
+            redirect_params = URIService.params(response.location)
+
+            expect(redirect_params[:code]).to be_present
+            expect(redirect_params[:state]).to eq(params[:state])
           end
         end
       end
 
       context 'with invalid params that do not interfere with the redirect_uri' do
-        before { params.delete(:prompt) }
+        before { params[:prompt] = '' }
 
         it 'redirects to the redirect_uri immediately with an invalid_request' do
           action

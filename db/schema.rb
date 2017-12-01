@@ -10,18 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122194214) do
+ActiveRecord::Schema.define(version: 20180201161105) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "app_settings", force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "value", limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["name"], name: "index_app_settings_on_name"
-  end
 
   create_table "authorizations", force: :cascade do |t|
     t.string "provider", limit: 255
@@ -56,6 +48,7 @@ ActiveRecord::Schema.define(version: 20171122194214) do
     t.string "scope"
     t.string "code_challenge"
     t.string "rails_session_id"
+    t.json "verified_attributes"
     t.index ["access_token"], name: "index_identities_on_access_token", unique: true
     t.index ["session_uuid"], name: "index_identities_on_session_uuid", unique: true
     t.index ["user_id", "service_provider"], name: "index_identities_on_user_id_and_service_provider", unique: true
@@ -81,7 +74,6 @@ ActiveRecord::Schema.define(version: 20171122194214) do
     t.datetime "activated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "vendor"
     t.text "encrypted_pii"
     t.string "ssn_signature", limit: 64
     t.text "encrypted_pii_recovery"
@@ -172,6 +164,7 @@ ActiveRecord::Schema.define(version: 20171122194214) do
     t.string "attribute_cost"
     t.text "encrypted_phone"
     t.integer "otp_delivery_preference", default: 0, null: false
+    t.integer "totp_timestamp"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email_fingerprint"], name: "index_users_on_email_fingerprint", unique: true
     t.index ["encrypted_otp_secret_key"], name: "index_users_on_encrypted_otp_secret_key", unique: true

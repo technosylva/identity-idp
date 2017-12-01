@@ -62,7 +62,7 @@ class EncryptedKeyMaker
     ciphertext = user_access_key.xor(decode(encryption_key)).sub(KEY_TYPE[:KMS], '')
     user_access_key.unlock(aws_client.decrypt(ciphertext_blob: ciphertext).plaintext)
   rescue Aws::KMS::Errors::InvalidCiphertextException
-    raise Pii::EncryptionError
+    raise Pii::EncryptionError, 'Aws::KMS::Errors::InvalidCiphertextException'
   end
 
   def make_local(user_access_key)
@@ -83,7 +83,10 @@ class EncryptedKeyMaker
   end
 
   def aws_client
-    @_aws_client ||= Aws::KMS::Client.new(region: Figaro.env.aws_region)
+    @_aws_client ||= Aws::KMS::Client.new(
+      instance_profile_credentials_timeout: 1, # defaults to 1 second
+      instance_profile_credentials_retries: 5, # defaults to 0 retries
+    )
   end
 
   def encryptor

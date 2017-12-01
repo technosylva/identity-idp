@@ -6,7 +6,7 @@ class ServiceProvider < ApplicationRecord
   validate :redirect_uris_are_parsable
 
   def self.from_issuer(issuer)
-    return NullServiceProvider.new(issuer: nil) unless issuer.present?
+    return NullServiceProvider.new(issuer: nil) if issuer.blank?
     find_by(issuer: issuer) || NullServiceProvider.new(issuer: issuer)
   end
 
@@ -61,7 +61,7 @@ class ServiceProvider < ApplicationRecord
 
   def redirect_uri_valid?(redirect_uri)
     parsed_uri = URI.parse(redirect_uri)
-    parsed_uri.scheme.present? || parsed_uri.host.present?
+    parsed_uri.scheme.present? && parsed_uri.host.present?
   rescue URI::BadURIError, URI::InvalidURIError
     false
   end

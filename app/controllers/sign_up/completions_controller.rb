@@ -1,7 +1,9 @@
 module SignUp
   class CompletionsController < ApplicationController
     include SecureHeadersConcern
+    include VerifySPAttributesConcern
 
+    before_action :confirm_two_factor_authenticated
     before_action :verify_confirmed, if: :loa3?
     before_action :apply_secure_headers_override, only: :show
 
@@ -20,7 +22,8 @@ module SignUp
       track_agency_handoff(
         Analytics::USER_REGISTRATION_AGENCY_HANDOFF_COMPLETE
       )
-
+      update_verified_attributes
+      clear_verify_attributes_sessions
       if decider.go_back_to_mobile_app?
         sign_user_out_and_instruct_to_go_back_to_mobile_app
       else
@@ -31,7 +34,7 @@ module SignUp
     private
 
     def show_completions_page?
-      service_providers = session[:sp].present? || @view_model.user_has_identities?
+      service_providers = sp_session[:issuer].present? || @view_model.user_has_identities?
       user_fully_authenticated? && service_providers
     end
 
@@ -39,7 +42,8 @@ module SignUp
       SignUpCompletionsShow.new(
         loa3_requested: loa3?,
         decorated_session: decorated_session,
-        current_user: current_user
+        current_user: current_user,
+        handoff: new_service_provider_attributes
       )
     end
 

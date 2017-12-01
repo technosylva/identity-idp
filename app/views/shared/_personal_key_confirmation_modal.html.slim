@@ -12,7 +12,7 @@
         = hidden_field_tag :authenticity_token, form_authenticity_token
 
         .clearfix.mxn2
-          .col.col-12.sm-col-6.px2.mb2.sm-mb0
+          .col.col-12.sm-col-6.px2.mb2.sm-mb0.sm-hide
             button(type='submit' class='col-12 btn btn-primary personal-key-confirm')
               = t('forms.buttons.continue')
           .col.col-12.sm-col-6.px2
@@ -21,3 +21,6 @@
               data-dismiss="personal-key-confirm"
             )
               = t('forms.buttons.back')
+          .col.col-12.sm-col-6.px2.mb2.sm-mb0.sm-show
+            button(type='submit' class='col-12 btn btn-primary personal-key-confirm')
+              = t('forms.buttons.continue')

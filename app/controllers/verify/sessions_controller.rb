@@ -44,7 +44,7 @@ module Verify
 
     def destroy
       idv_session = user_session[:idv]
-      idv_session && idv_session.clear
+      idv_session&.clear
       handle_idv_redirect
     end
 
@@ -52,17 +52,12 @@ module Verify
 
     def submit_idv_job
       Idv::SubmitIdvJob.new(
-        idv_session: idv_session,
-        vendor_params: idv_session.vendor_params
+        idv_session: idv_session, vendor_params: idv_session.vendor_params
       ).submit_profile_job
     end
 
-    def step_name
-      :sessions
-    end
-
     def confirm_step_needed
-      redirect_to verify_finance_url if idv_session.profile_confirmation == true
+      redirect_to verify_address_url if idv_session.profile_confirmation == true
     end
 
     def step
@@ -83,11 +78,8 @@ module Verify
       pii_msg = ActionController::Base.helpers.content_tag(
         :strong, t('idv.messages.sessions.pii')
       )
-
-      flash[:success] = t('idv.messages.sessions.success',
-                          pii_message: pii_msg)
-
-      redirect_to verify_finance_url
+      flash[:success] = t('idv.messages.sessions.success', pii_message: pii_msg)
+      redirect_to verify_address_url
     end
 
     def process_failure
@@ -96,6 +88,7 @@ module Verify
         redirect_to verify_session_dupe_url
       else
         render_failure
+        @view_model.unsupported_jurisdiction_error(decorated_session.sp_name)
         render :new
       end
     end
@@ -118,7 +111,7 @@ module Verify
     end
 
     def profile_params
-      params.require(:profile).permit(*Pii::Attributes.members)
+      params.require(:profile).permit(Idv::ProfileForm::PROFILE_ATTRIBUTES)
     end
   end
 end

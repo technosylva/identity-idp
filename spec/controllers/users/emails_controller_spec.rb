@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-include Features::LocalizationHelper
-include Features::MailerHelper
-
 describe Users::EmailsController do
+  include Features::LocalizationHelper
+  include Features::MailerHelper
+
   describe '#update' do
     let(:user) { create(:user, :signed_up, email: 'old_email@example.com') }
     let(:second_user) { create(:user, :signed_up, email: 'another@example.com') }
@@ -124,6 +124,13 @@ describe Users::EmailsController do
         expect(@analytics).to have_received(:track_event).
           with(Analytics::EMAIL_CHANGE_REQUEST, analytics_hash)
       end
+    end
+
+    it 'renders edit if email is a Hash' do
+      stub_sign_in(user)
+      put :update, params: { update_user_email_form: { email: { foo: 'bar' } } }
+
+      expect(response).to render_template(:edit)
     end
   end
 end

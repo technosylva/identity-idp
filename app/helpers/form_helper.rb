@@ -1,4 +1,10 @@
 module FormHelper
+  def state_id_types
+    Idv::FormStateIdValidator::STATE_ID_TYPES.map do |state_id_type|
+      [t("idv.form.state_id_type.#{state_id_type}"), state_id_type]
+    end
+  end
+
   # rubocop:disable MethodLength, WordArray
   # This method is single statement spread across many lines for readability
   def us_states_territories
@@ -79,6 +85,10 @@ module FormHelper
 
   def unsupported_area_codes
     PhoneNumberCapabilities::VOICE_UNSUPPORTED_US_AREA_CODES
+  end
+
+  def supported_jurisdictions
+    Idv::FormStateIdValidator::SUPPORTED_JURISDICTIONS
   end
 
   private

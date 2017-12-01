@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 feature 'Sign Up' do
+  include SamlAuthHelper
+
   context 'confirmation token error message does not persist on success' do
     scenario 'with no or invalid token' do
       visit sign_up_create_email_confirmation_url(confirmation_token: '')
@@ -91,6 +93,19 @@ feature 'Sign Up' do
         expect(page).to have_xpath("//input[@value=\"#{t('sign_up.buttons.cancel')}\"]")
       end
     end
+
+    context 'user enters their email as their password', email: true do
+      it 'treats it as a weak password' do
+        email = 'test@test.com'
+
+        visit sign_up_email_path
+        submit_form_with_valid_email(email)
+        click_confirmation_link_in_email(email)
+
+        fill_in 'Password', with: email
+        expect(page).to have_content('Very weak')
+      end
+    end
   end
 
   context 'user accesses password screen with already confirmed token', email: true do
@@ -128,4 +143,9 @@ feature 'Sign Up' do
       expect(page).to_not have_content 'userb@test.com'
     end
   end
+
+  it_behaves_like 'csrf error when acknowledging personal key', :saml
+  it_behaves_like 'csrf error when acknowledging personal key', :oidc
+  it_behaves_like 'creating an account with the site in Spanish', :saml
+  it_behaves_like 'creating an account with the site in Spanish', :oidc
 end

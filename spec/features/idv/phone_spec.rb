@@ -21,14 +21,14 @@ feature 'Verify phone' do
 
       enter_correct_otp_code_for_user(user)
       fill_in :user_password, with: user_password
-      click_submit_default
+      click_continue
       click_acknowledge_personal_key
 
       expect(current_path).to eq account_path
     end
 
     scenario 'phone number with no voice otp support only allows sms delivery' do
-      guam_phone = '671-555-5000'
+      unsupported_phone = '242-555-5000'
       user = create(
         :user, :signed_up,
         otp_delivery_preference: 'voice',
@@ -41,7 +41,7 @@ feature 'Verify phone' do
       allow(VoiceOtpSenderJob).to receive(:perform_later)
       allow(SmsOtpSenderJob).to receive(:perform_later)
 
-      complete_idv_profile_with_phone(guam_phone)
+      complete_idv_profile_with_phone(unsupported_phone)
 
       expect(current_path).to eq login_two_factor_path(otp_delivery_preference: :sms)
       expect(VoiceOtpSenderJob).to_not have_received(:perform_later)
@@ -54,8 +54,6 @@ feature 'Verify phone' do
 
       visit verify_session_path
       fill_out_idv_form_ok
-      click_idv_continue
-      fill_out_financial_form_ok
       click_idv_continue
       click_idv_address_choose_phone
       fill_out_phone_form_ok
@@ -81,8 +79,6 @@ feature 'Verify phone' do
       visit verify_session_path
       fill_out_idv_form_ok
       click_idv_continue
-      fill_out_financial_form_ok
-      click_idv_continue
       click_idv_address_choose_phone
 
       fill_in 'Phone', with: user.phone
@@ -96,7 +92,7 @@ feature 'Verify phone' do
       choose_idv_otp_delivery_method_sms
       enter_correct_otp_code_for_user(user)
       fill_in :user_password, with: user_password
-      click_submit_default
+      click_continue
       click_acknowledge_personal_key
 
       expect(current_path).to eq account_path
@@ -107,8 +103,6 @@ feature 'Verify phone' do
     sign_in_and_2fa_user
     visit verify_session_path
     fill_out_idv_form_ok
-    click_idv_continue
-    fill_out_financial_form_ok
     click_idv_continue
 
     visit verify_phone_path
@@ -123,8 +117,6 @@ feature 'Verify phone' do
     visit verify_session_path
     fill_out_idv_form_ok
     click_idv_continue
-    fill_out_financial_form_ok
-    click_idv_continue
 
     visit verify_phone_path
     fill_in 'Phone', with: ''
@@ -135,8 +127,6 @@ feature 'Verify phone' do
 
   def complete_idv_profile_with_phone(phone)
     fill_out_idv_form_ok
-    click_idv_continue
-    fill_out_financial_form_ok
     click_idv_continue
     click_idv_address_choose_phone
     fill_out_phone_form_ok(phone)

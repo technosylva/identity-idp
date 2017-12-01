@@ -2,8 +2,6 @@ class RegisterUserEmailForm
   include ActiveModel::Model
   include FormEmailValidator
 
-  attr_reader :request_id
-
   def self.model_name
     ActiveModel::Name.new(self, nil, 'User')
   end
@@ -50,6 +48,7 @@ class RegisterUserEmailForm
     {
       email_already_exists: email_taken?,
       user_id: existing_user.uuid,
+      domain_name: email&.split('@')&.last,
     }
   end
 

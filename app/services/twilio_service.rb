@@ -1,6 +1,10 @@
+require 'typhoeus/adapters/faraday'
+
 class TwilioService
-  SMS_ERROR_CODE = 21_211
-  INVALID_ERROR_CODE = 21_614
+  INVALID_VOICE_NUMBER_ERROR_CODE = 13_224
+  SMS_ERROR_CODE = 21_614
+  INVALID_ERROR_CODE = 21_211
+  INVALID_CALLING_AREA_ERROR_CODE = 21_215
 
   cattr_accessor :telephony_service do
     Twilio::REST::Client
@@ -12,6 +16,7 @@ class TwilioService
               else
                 twilio_client
               end
+    @client.http_client.adapter = :typhoeus
   end
 
   def place_call(params = {})
@@ -23,17 +28,17 @@ class TwilioService
 
   def send_sms(params = {})
     sanitize_errors do
-      params = params.reverse_merge(from: from_number)
+      params = params.reverse_merge(messaging_service_sid: Figaro.env.twilio_messaging_service_sid)
       client.messages.create(params)
     end
   end
 
-  def account
-    @account ||= random_account
+  def phone_number
+    @phone_number ||= random_phone_number
   end
 
   def from_number
-    "+1#{account['number']}"
+    "+1#{phone_number}"
   end
 
   private
@@ -42,13 +47,13 @@ class TwilioService
 
   def twilio_client
     telephony_service.new(
-      account['sid'],
-      account['auth_token']
+      TWILIO_SID,
+      TWILIO_AUTH_TOKEN
     )
   end
 
-  def random_account
-    TWILIO_ACCOUNTS.sample
+  def random_phone_number
+    TWILIO_NUMBERS.sample
   end
 
   def sanitize_errors

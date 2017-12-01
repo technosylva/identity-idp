@@ -9,6 +9,8 @@ test:
     friendly_name: 'Your friendly Government Agency'
     logo: 'generic.svg'
     return_to_sp_url: 'http://localhost:3000'
+    redirect_uris:
+      - 'x-example-app://idp_return'
     attribute_bundle:
       - email
       - phone
@@ -128,6 +130,15 @@ development:
     cert: 'sp_sinatra_demo'
     friendly_name: 'Example Sinatra App'
 
+  'urn:gov:gsa:openidconnect:sp:expressjs':
+    agency: 'GSA'
+    cert: 'sp_expressjs_demo'
+    friendly_name: 'Example OIDC Client (Express.js)'
+    logo: '18f.svg'
+    redirect_uris:
+      - 'http://localhost:9393/'
+      - 'http://localhost:9393/auth/login-gov/callback'
+
 production:
   'https://idp.dev.login.gov':
     metadata_url: 'https://idp.dev.login.gov/api/saml/metadata'
@@ -174,47 +185,6 @@ production:
       - email
   <% end %>
 
-# Micro-purchase
-  'urn:gov:gsa:SAML:2.0.profiles:sp:sso:localhost-micropurchase':
-    acs_url: 'http://localhost:3000/auth/saml/callback'
-    assertion_consumer_logout_service_url: 'http://localhost:3000/auth/saml/logout'
-    sp_initiated_login_url: 'http://localhost:3000/admin/sign_in'
-    block_encryption: 'aes256-cbc'
-    cert: 'sp_micropurchase'
-    logo: '18f.svg'
-    agency: 'TTS Acquisition'
-    friendly_name: 'Micro-purchase Dev'
-    return_to_sp_url: 'http://localhost:3000'
-    attribute_bundle:
-      - email
-
-  'urn:gov:gsa:SAML:2.0.profiles:sp:sso:micropurchase-staging':
-    acs_url: 'https://micropurchase-staging.18f.gov/auth/saml/callback'
-    assertion_consumer_logout_service_url: 'https://micropurchase-staging.18f.gov/auth/saml/logout'
-    sp_initiated_login_url: 'https://micropurchase-staging.18f.gov/admin/sign_in'
-    block_encryption: 'aes256-cbc'
-    cert: 'sp_micropurchase'
-    logo: '18f.svg'
-    agency: 'TTS Acquisition'
-    friendly_name: 'Micro-purchase Staging'
-    return_to_sp_url: 'https://micropurchase-staging.18f.gov'
-    attribute_bundle:
-      - email
-
-  'urn:gov:gsa:SAML:2.0.profiles:sp:sso:micropurchase-production':
-    acs_url: 'https://micropurchase.18f.gov/auth/saml/callback'
-    assertion_consumer_logout_service_url: 'https://micropurchase.18f.gov/auth/saml/logout'
-    sp_initiated_login_url: 'https://micropurchase.18f.gov/admin/sign_in'
-    block_encryption: 'aes256-cbc'
-    cert: 'sp_micropurchase'
-    agency: 'TTS Acquisition'
-    logo: '18f.svg'
-    restrict_to_deploy_env: 'prod'
-    friendly_name: 'Micro-purchase'
-    return_to_sp_url: 'https://micropurchase.18f.gov'
-    attribute_bundle:
-      - email
-
   # Dashboard
   <% if LoginGov::Hostdata.in_datacenter? %>
   'https://dashboard.<%= LoginGov::Hostdata.env %>.<%= LoginGov::Hostdata.domain %>':
@@ -240,6 +210,15 @@ production:
       <% if LoginGov::Hostdata.in_datacenter? %>
       - 'https://sp-oidc-sinatra.<%= LoginGov::Hostdata.env %>.<%= LoginGov::Hostdata.domain %>/'
       <% end %>
+
+  'urn:gov:gsa:openidconnect:sp:expressjs':
+    agency: 'GSA'
+    cert: 'sp_expressjs_demo'
+    friendly_name: 'Example OIDC Client (Express.js)'
+    logo: '18f.svg'
+    redirect_uris:
+      - 'http://localhost:9393/'
+      - 'http://localhost:9393/auth/login-gov/callback'
 
   # CBP Jobs
   'urn:gov:dhs.cbp.jobs:openidconnect:cert':
@@ -308,6 +287,18 @@ production:
     cert: 'rrb_benefit_connect_staging'
     redirect_uris:
       - 'https://usrrbsecuredev2.rrb.gov/BenefitOnlineServices'
+    attribute_bundle:
+      - email
+      - first_name
+      - last_name
+      - address1
+      - address2
+      - city
+      - state
+      - zipcode
+      - phone
+      - dob
+      - ssn
     restrict_to_deploy_env: 'staging'
 
   # CBP GOES
@@ -339,6 +330,15 @@ production:
       - 'gov.dhs.cbp.pspd.oars.user.prod://result'
     restrict_to_deploy_env: 'prod'
 
+  # CBP I'm Ready
+  'urn:gov:gsa:openidconnect.profiles:sp:sso:cbp:imready':
+    friendly_name: "CBP I'm Ready"
+    agency: 'DHS'
+    logo: 'cbp.png'
+    redirect_uris:
+      - 'gov.dhs.cbp.pspd.imready.user.prod://result'
+    restrict_to_deploy_env: 'prod'
+
   # USAJOBS
   'urn:gov:gsa:openidconnect.profiles:sp:sso:OPM:USAJOBS':
     friendly_name: 'USAJOBS'
@@ -347,6 +347,7 @@ production:
     redirect_uris:
       - 'https://login.test.usajobs.gov/openid'
       - 'https://login.test.usajobs.gov/externalloggedout'
+    return_to_sp_url: 'https://www.test.usajobs.gov/'
     restrict_to_deploy_env: 'staging'
 
   'urn:gov:gsa:openidconnect.profiles:sp:sso:OPM:USAJOBS:UAT':
@@ -356,4 +357,55 @@ production:
     redirect_uris:
       - 'https://login.uat.usajobs.gov/openid'
       - 'https://login.uat.usajobs.gov/externalloggedout'
+    return_to_sp_url: 'https://www.uat.usajobs.gov/'
     restrict_to_deploy_env: 'staging'
+
+  'urn:gov:gsa:openidconnect.profiles:sp:sso:OPM:USAJOBS:PROD':
+    friendly_name: 'USAJOBS'
+    agency: 'OPM'
+    logo: 'usajobs.svg'
+    redirect_uris:
+      - 'https://login.usajobs.gov/openid'
+      - 'https://login.usajobs.gov/externalloggedout'
+    return_to_sp_url:  'https://www.usajobs.gov/'
+    restrict_to_deploy_env: 'prod'
+
+  # NGA NSG Open Mapping Enclave (NOME)
+  'urn:gov:gsa:openidconnect.profiles:sp:sso:VGITeam:NOME':
+    friendly_name: 'NSG Open Mapping Enclave (NOME)'
+    agency: 'NGA'
+    logo: 'nome.png'
+    cert: 'nome_prod'
+    redirect_uris:
+      - 'https://blog.vgihub.geointservices.io/op_redirect'
+      - 'https://certgen.vgihub.geointservices.io/op_redirect'
+      - 'https://compare.vgihub.geointservices.io/op_redirect'
+      - 'https://download.vgihub.geointservices.io/op_redirect'
+      - 'https://geojson.vgihub.geointservices.io/op_redirect'
+      - 'https://geonode.vgihub.geointservices.io/op_redirect'
+      - 'https://geonode-old.vgihub.geointservices.io/op_redirect'
+      - 'https://hootenanny.vgihub.geointservices.io/op_redirect'
+      - 'https://hotnightly.vgihub.geointservices.io/op_redirect'
+      - 'https://testing.vgihub.geointservices.io/op_redirect'
+      - 'https://metest.vgihub.geointservices.io/op_redirect'
+      - 'https://nomtest.vgihub.geointservices.io/op_redirect'
+      - 'https://tmtest.vgihub.geointservices.io/op_redirect'
+      - 'https://maproulette.vgihub.geointservices.io/op_redirect'
+      - 'https://nome.vgihub.geointservices.io/op_redirect'
+      - 'https://nome-vector.vgihub.geointservices.io/op_redirect'
+      - 'https://nominatim.vgihub.geointservices.io/op_redirect'
+      - 'https://onion.vgihub.geointservices.io/op_redirect'
+      - 'https://osqa.vgihub.geointservices.io/op_redirect'
+      - 'https://overpassapi.vgihub.geointservices.io/op_redirect'
+      - 'https://overpass.vgihub.geointservices.io/op_redirect'
+      - 'https://piwik.vgihub.geointservices.io/op_redirect'
+      - 'https://rocketchat.vgihub.geointservices.io/op_redirect'
+      - 'https://saadmin.vgihub.geointservices.io/op_redirect'
+      - 'https://saserver.vgihub.geointservices.io/op_redirect'
+      - 'https://stats.vgihub.geointservices.io/op_redirect'
+      - 'https://status.vgihub.geointservices.io/op_redirect'
+      - 'https://taginfo.vgihub.geointservices.io/op_redirect'
+      - 'https://tasks.vgihub.geointservices.io/op_redirect'
+      - 'https://training.vgihub.geointservices.io/op_redirect'
+      - 'https://wiki.vgihub.geointservices.io/op_redirect'
+    restrict_to_deploy_env: 'prod'

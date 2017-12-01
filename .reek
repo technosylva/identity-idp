@@ -15,6 +15,7 @@ DuplicateMethodCall:
     - FileEncryptor#encrypt
     - UserFlowExporter#self.massage_assets
     - BasicAuthUrl#build
+    - fallback_to_english
 FeatureEnvy:
   exclude:
     - ActiveJob::Logging::LogSubscriber#json_for
@@ -32,6 +33,11 @@ FeatureEnvy:
     - Idv::Step#vendor_validator_result
     - IdvSession#vendor_result_timed_out?
     - ServiceProviderSeeder#run
+    - OtpDeliverySelectionForm#unsupported_phone?
+    - fallback_to_english
+    - UserEncryptedAttributeOverrides#find_with_email
+    - Utf8Sanitizer#event_attributes
+    - Utf8Sanitizer#remote_ip
 InstanceVariableAssumption:
   exclude:
     - User
@@ -58,6 +64,7 @@ RepeatedConditional:
     - Users::ResetPasswordsController
     - VerifyController
     - Verify::Base
+    - Rack::Attack
 TooManyConstants:
   exclude:
     - Analytics
@@ -88,6 +95,7 @@ TooManyMethods:
     - User
     - Verify::SessionsController
     - ServiceProviderSessionDecorator
+    - SessionDecorator
 UncommunicativeMethodName:
   exclude:
     - PhoneConfirmationFlow
@@ -107,6 +115,7 @@ UtilityFunction:
     - AnalyticsEventJob#perform
     - ApplicationController#default_url_options
     - ApplicationHelper#step_class
+    - NullTwilioClient#http_client
     - PersonalKeyFormatter#regexp
     - SessionTimeoutWarningHelper#frequency
     - SessionTimeoutWarningHelper#start
@@ -123,6 +132,7 @@ UtilityFunction:
   ControlParameter:
     exclude:
       - complete_idv_session
+      - visit_idp_from_sp_with_loa1
       - visit_idp_from_sp_with_loa3
   DuplicateMethodCall:
     enabled: false
@@ -148,6 +158,7 @@ UtilityFunction:
       - visit_idp_from_sp_with_loa1
       - visit_idp_from_sp_with_loa3
       - visit_idp_from_mobile_app_with_loa1
+      - visit_idp_from_oidc_sp_with_loa1
       - visit_idp_from_oidc_sp_with_loa3
   UncommunicativeParameterName:
     exclude:

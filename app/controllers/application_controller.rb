@@ -11,12 +11,23 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_auth_token
   rescue_from ActionController::UnknownFormat, with: :render_not_found
+  [
+    ActiveRecord::ConnectionTimeoutError,
+    PG::ConnectionBad, # raised when a Postgres connection times out
+    Rack::Timeout::RequestTimeoutException,
+    Redis::BaseConnectionError,
+  ].each do |error|
+    rescue_from error, with: :render_timeout
+  end
 
   helper_method :decorated_session, :reauthn?, :user_fully_authenticated?
 
+  prepend_before_action :add_new_relic_trace_attributes
   prepend_before_action :session_expires_at
   prepend_before_action :set_locale
   before_action :disable_caching
+
+  skip_before_action :handle_two_factor_authentication
 
   def session_expires_at
     now = Time.zone.now
@@ -39,7 +50,7 @@ class ApplicationController < ActionController::Base
   end
 
   def analytics_user
-    current_user || AnonymousUser.new
+    warden.user || AnonymousUser.new
   end
 
   def create_user_event(event_type, user = current_user)
@@ -61,6 +72,14 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # These attributes show up in New Relic traces for all requests.
+  # https://docs.newrelic.com/docs/agents/manage-apm-agents/agent-data/collect-custom-attributes
+  def add_new_relic_trace_attributes
+    ::NewRelic::Agent.add_custom_attributes(
+      amzn_trace_id: request.headers['X-Amzn-Trace-Id']
+    )
+  end
+
   def disable_caching
     response.headers['Cache-Control'] = 'no-store'
     response.headers['Pragma'] = 'no-cache'
@@ -69,7 +88,9 @@ class ApplicationController < ActionController::Base
   def redirect_on_timeout
     return unless params[:timeout]
 
-    flash[:notice] = t('notices.session_cleared', minutes: Figaro.env.session_timeout_in_minutes)
+    unless current_user
+      flash[:notice] = t('notices.session_cleared', minutes: Figaro.env.session_timeout_in_minutes)
+    end
     redirect_to url_for(permitted_timeout_params)
   end
 
@@ -95,8 +116,8 @@ class ApplicationController < ActionController::Base
     @service_provider_request ||= ServiceProviderRequest.from_uuid(params[:request_id])
   end
 
-  def after_sign_in_path_for(user)
-    stored_location_for(user) || sp_session[:request_url] || signed_in_url
+  def after_sign_in_path_for(_user)
+    user_session[:stored_location] || sp_session[:request_url] || signed_in_url
   end
 
   def signed_in_url
@@ -107,13 +128,15 @@ class ApplicationController < ActionController::Base
     params[:reauthn]
   end
 
-  def invalid_auth_token(exception)
-    analytics.track_event(Analytics::INVALID_AUTHENTICITY_TOKEN)
-    sign_out
+  def invalid_auth_token(_exception)
+    controller_info = "#{controller_path}##{action_name}"
+    analytics.track_event(
+      Analytics::INVALID_AUTHENTICITY_TOKEN,
+      controller: controller_info,
+      user_signed_in: user_signed_in?
+    )
     flash[:error] = t('errors.invalid_authenticity_token')
-    redirect_to root_url
-
-    ExceptionNotifier.notify_exception(exception, env: request.env)
+    redirect_back fallback_location: new_user_session_url
   end
 
   def user_fully_authenticated?
@@ -157,5 +180,18 @@ class ApplicationController < ActionController::Base
 
   def render_not_found
     render template: 'pages/page_not_found', layout: false, status: 404, formats: :html
+  end
+
+  def render_timeout(exception)
+    analytics.track_event(Analytics::RESPONSE_TIMED_OUT, analytics_exception_info(exception))
+    render template: 'pages/page_took_too_long', layout: false, status: 503, formats: :html
+  end
+
+  def analytics_exception_info(exception)
+    {
+      backtrace: Rails.backtrace_cleaner.send(:filter, exception.backtrace),
+      exception_message: exception.to_s,
+      exception_class: exception.class.name,
+    }
   end
 end

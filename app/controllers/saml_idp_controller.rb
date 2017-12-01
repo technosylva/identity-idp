@@ -8,18 +8,17 @@ class SamlIdpController < ApplicationController
   include SamlIdpLogoutConcern
   include FullyAuthenticatable
   include VerifyProfileConcern
+  include VerifySPAttributesConcern
 
   skip_before_action :verify_authenticity_token
-  skip_before_action :handle_two_factor_authentication, only: :logout
 
   def auth
     return confirm_two_factor_authenticated(request_id) unless user_fully_authenticated?
-    process_fully_authenticated_user do |needs_idv, needs_profile_finish|
-      return store_location_and_redirect_to(verify_url) if needs_idv && !needs_profile_finish
-      return store_location_and_redirect_to(account_or_verify_profile_url) if needs_profile_finish
-    end
-    delete_branded_experience
-    render_template_for(saml_response, saml_request.response_url, 'SAMLResponse')
+    link_identity_from_session_data
+    capture_analytics
+    return redirect_to_account_or_verify_profile_url if profile_or_identity_needs_verification?
+    return redirect_to(sign_up_completed_url) if needs_sp_attribute_verification?
+    handle_successful_handoff
   end
 
   def metadata
@@ -39,25 +38,36 @@ class SamlIdpController < ApplicationController
 
   private
 
-  def process_fully_authenticated_user
-    link_identity_from_session_data
-
-    needs_idv = identity_needs_verification?
-    needs_profile_finish = profile_needs_verification?
-    analytics_payload =  @result.to_h.merge(idv: needs_idv, finish_profile: needs_profile_finish)
-    analytics.track_event(Analytics::SAML_AUTH, analytics_payload)
-
-    yield needs_idv, needs_profile_finish
+  def redirect_to_account_or_verify_profile_url
+    return redirect_to(account_or_verify_profile_url) if profile_needs_verification?
+    redirect_to(verify_url) if identity_needs_verification?
   end
 
-  def store_location_and_redirect_to(url)
-    store_location_for(:user, request.original_url)
-    redirect_to url
+  def profile_or_identity_needs_verification?
+    profile_needs_verification? || identity_needs_verification?
+  end
+
+  def capture_analytics
+    analytics_payload = @result.to_h.merge(
+      idv: identity_needs_verification?,
+      finish_profile: profile_needs_verification?
+    )
+    analytics.track_event(Analytics::SAML_AUTH, analytics_payload)
+  end
+
+  def handle_successful_handoff
+    delete_branded_experience
+    render_template_for(saml_response, saml_request.response_url, 'SAMLResponse')
   end
 
   def render_template_for(message, action_url, type)
     domain = SecureHeadersWhitelister.extract_domain(action_url)
-    override_content_security_policy_directives(form_action: ["'self'", domain])
+
+    # Returns fully formed CSP array w/"'self'", domain, and ServiceProvider#redirect_uris
+    csp_uris = SecureHeadersWhitelister.csp_with_sp_redirect_uris(
+      domain, decorated_session.sp_redirect_uris
+    )
+    override_content_security_policy_directives(form_action: csp_uris)
 
     render(
       template: 'saml_idp/shared/saml_post_binding',

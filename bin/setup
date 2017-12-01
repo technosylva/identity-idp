@@ -24,16 +24,14 @@ Dir.chdir APP_ROOT do
   ]
 
   puts "== Copying application.yml =="
-  run "cp config/application.yml.example config/application.yml"
+  run "test -L config/application.yml || cp config/application.yml.example config/application.yml"
 
   puts "== Copying logstash.conf =="
   run "cat logstash.conf.example | sed 's/path_to_repo/#{APP_ROOT.to_s.gsub('/', '\/')}/g' > logstash.conf"
 
   puts "== Copying sample certs and keys =="
-  run "cp keys/saml.key.enc.example keys/saml.key.enc"
-  run "cp keys/equifax_rsa.example keys/equifax_rsa"
-  run "cp keys/equifax_rsa.pub.example keys/equifax_rsa.pub"
-  run "cp certs/saml.crt.example certs/saml.crt"
+  run "test -L keys/saml.key.enc || cp keys/saml.key.enc.example keys/saml.key.enc"
+  run "test -L certs/saml.crt || cp certs/saml.crt.example certs/saml.crt"
 
   if ARGV.shift == "--docker" then
     run 'docker-compose build'
@@ -43,17 +41,16 @@ Dir.chdir APP_ROOT do
     exit
   end
 
-  puts "\n== GPG Setup =="
+  puts "\n== Example Key Generation =="
   run "which gpg || brew install gpg"
-  run "gpg --dearmor < keys/equifax_gpg.pub.example > keys/equifax_gpg.pub.bin"
-  system "gpg --batch --import keys/equifax_gpg.example"
+  run "bin/generate-example-keys"
 
   puts "\n== Installing dependencies =="
   run "gem install bundler --conservative"
   run 'gem install foreman --conservative && gem update foreman'
   run "bundle check || bundle install --without deploy production"
-  run "npm install"
-  run "npm run build"
+  run "yarn install"
+  run "yarn build"
   run "gem install mailcatcher"
 
   puts "\n== Preparing database =="

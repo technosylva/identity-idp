@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-include SamlAuthHelper
-include IdvHelper
-
 feature 'saml api' do
+  include SamlAuthHelper
+  include IdvHelper
+
   let(:user) { create(:user, :signed_up) }
 
   context 'SAML Assertions' do
@@ -44,6 +44,7 @@ feature 'saml api' do
       before do
         sign_in_and_2fa_user(user)
         visit sp1_authnrequest
+        click_continue
       end
 
       let(:xmldoc) { SamlResponseDoc.new('feature', 'response_assertion') }
@@ -57,6 +58,7 @@ feature 'saml api' do
       before do
         sign_in_and_2fa_user(user)
         visit authnrequest_get
+        click_continue
       end
 
       let(:xmldoc) { SamlResponseDoc.new('feature', 'response_assertion') }

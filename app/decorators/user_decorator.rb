@@ -1,6 +1,6 @@
-include ActionView::Helpers::DateHelper
-
 class UserDecorator
+  include ActionView::Helpers::DateHelper
+
   MAX_RECENT_EVENTS = 5
   DEFAULT_LOCKOUT_PERIOD = 10.minutes
 
@@ -108,7 +108,7 @@ class UserDecorator
   end
 
   def should_acknowledge_personal_key?(session)
-    return true if session[:new_personal_key]
+    return true if session[:personal_key]
 
     sp_session = session[:sp]
 
@@ -116,9 +116,9 @@ class UserDecorator
   end
 
   def recent_events
-    events = user.events.order('updated_at DESC').limit(MAX_RECENT_EVENTS).map(&:decorate)
+    events = user.events.order('created_at DESC').limit(MAX_RECENT_EVENTS).map(&:decorate)
     identities = user.identities.order('last_authenticated_at DESC').map(&:decorate)
-    (events + identities).sort { |thing_a, thing_b| thing_b.happened_at <=> thing_a.happened_at }
+    (events + identities).sort_by(&:happened_at).reverse
   end
 
   def verified_account_partial

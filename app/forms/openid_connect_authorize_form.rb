@@ -28,7 +28,7 @@ class OpenidConnectAuthorizeForm
   validates :nonce, presence: true, length: { minimum: RANDOM_VALUE_MINIMUM_LENGTH }
 
   validates :response_type, inclusion: { in: %w[code] }
-  validates :prompt, presence: true, inclusion: { in: %w[select_account] }
+  validates :prompt, presence: true, allow_nil: true, inclusion: { in: %w[login select_account] }
   validates :code_challenge_method, inclusion: { in: %w[S256] }, if: :code_challenge
 
   validate :validate_acr_values
@@ -42,6 +42,7 @@ class OpenidConnectAuthorizeForm
     SIMPLE_ATTRS.each do |key|
       instance_variable_set(:"@#{key}", params[key])
     end
+    @prompt ||= 'select_account'
 
     @openid_connect_redirector = OpenidConnectRedirector.new(
       redirect_uri: redirect_uri, service_provider: service_provider, state: state, errors: errors
@@ -55,7 +56,7 @@ class OpenidConnectAuthorizeForm
   end
 
   def loa3_requested?
-    ial == 3
+    loa == 3
   end
 
   def sp_redirect_uri
@@ -86,6 +87,11 @@ class OpenidConnectAuthorizeForm
 
   attr_reader :identity, :success, :openid_connect_redirector, :already_linked
 
+  def requested_attributes
+    @requested_attributes ||=
+      OpenidConnectAuthorizeDecorator.new(scopes: scope).requested_attributes
+  end
+
   def parse_to_values(param_value, possible_values)
     return [] if param_value.blank?
     param_value.split(' ').compact & possible_values
@@ -110,13 +116,17 @@ class OpenidConnectAuthorizeForm
     errors.add(:scope, t('openid_connect.authorization.errors.no_valid_scope'))
   end
 
-  def ial
+  def loa
     case acr_values.sort.max
     when Saml::Idp::Constants::LOA1_AUTHN_CONTEXT_CLASSREF
       1
     when Saml::Idp::Constants::LOA3_AUTHN_CONTEXT_CLASSREF
       3
     end
+  end
+
+  def ial
+    loa == 3 ? 3 : 1
   end
 
   def extra_analytics_attributes

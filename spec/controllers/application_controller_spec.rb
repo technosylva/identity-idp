@@ -16,6 +16,31 @@ describe ApplicationController do
     end
   end
 
+  #
+  # We don't test *every* exception we try to capture since we handle all such exceptions the same
+  # way. This test doesn't ensure we have the right set of exceptions caught, but that, if caught,
+  # we handle the exception with the proper response.
+  #
+  describe 'handling RequestTimeoutException exceptions' do
+    controller do
+      def index
+        raise Rack::Timeout::RequestTimeoutException, {}
+      end
+    end
+
+    it 'returns a proper status' do
+      get :index
+
+      expect(response.status).to eq 503
+    end
+
+    it 'returns an html page' do
+      get :index
+
+      expect(response.content_type).to eq 'text/html'
+    end
+  end
+
   describe 'handling InvalidAuthenticityToken exceptions' do
     controller do
       def index
@@ -23,18 +48,30 @@ describe ApplicationController do
       end
     end
 
-    it 'tracks the InvalidAuthenticityToken event and signs user out' do
+    it 'tracks the InvalidAuthenticityToken event and does not sign the user out' do
       sign_in_as_user
       expect(subject.current_user).to be_present
 
       stub_analytics
-      expect(@analytics).to receive(:track_event).with(Analytics::INVALID_AUTHENTICITY_TOKEN)
+      event_properties = { controller: 'anonymous#index', user_signed_in: true }
+      expect(@analytics).to receive(:track_event).
+        with(Analytics::INVALID_AUTHENTICITY_TOKEN, event_properties)
 
       get :index
 
       expect(flash[:error]).to eq t('errors.invalid_authenticity_token')
       expect(response).to redirect_to(root_url)
-      expect(subject.current_user).to be_nil
+      expect(subject.current_user).to be_present
+    end
+
+    it 'redirects back to referer if present' do
+      referer = 'http://example.com/sign_up/enter_email?request_id=123'
+
+      request.env['HTTP_REFERER'] = referer
+
+      get :index
+
+      expect(response).to redirect_to(referer)
     end
   end
 
@@ -96,7 +133,7 @@ describe ApplicationController do
       it 'calls the Analytics class by default with current_user, request, and issuer' do
         user = build_stubbed(:user)
         sp = ServiceProvider.new(issuer: 'http://localhost:3000')
-        allow(controller).to receive(:current_user).and_return(user)
+        allow(controller).to receive(:analytics_user).and_return(user)
         allow(controller).to receive(:current_sp).and_return(sp)
 
         expect(Analytics).to receive(:new).with(user: user, request: request, sp: sp.issuer)
@@ -182,6 +219,39 @@ describe ApplicationController do
         get :index, params: { timeout: true, request_id: '123' }
 
         expect(response.header['Location']).to match '123'
+      end
+    end
+  end
+
+  describe '#redirect_on_timeout' do
+    before { routes.draw { get 'index' => 'anonymous#index' } }
+    after { Rails.application.reload_routes! }
+
+    controller do
+      def index
+        render plain: 'Hello'
+      end
+    end
+    let(:user) { build_stubbed(:user) }
+
+    context 'when the current user is present' do
+      it 'does not display flash message' do
+        allow(subject).to receive(:current_user).and_return(user)
+
+        get :index, params: { timeout: true, request_id: '123' }
+
+        expect(flash[:notice]).to be_nil
+      end
+    end
+
+    context 'when there is no current user' do
+      it 'displays a flash message' do
+        allow(subject).to receive(:current_user).and_return(nil)
+
+        get :index, params: { timeout: true, request_id: '123' }
+
+        expect(flash[:notice]).
+          to eq t('notices.session_cleared', minutes: Figaro.env.session_timeout_in_minutes)
       end
     end
   end

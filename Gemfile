@@ -7,9 +7,9 @@ gem 'rails', '~> 5.1.3'
 
 gem 'ahoy_matey'
 gem 'american_date'
-gem 'aws-sdk-core'
+gem 'aws-sdk-kms', '~> 1.4'
+gem 'aws-sdk-ses', '~> 1.6'
 gem 'base32-crockford'
-gem 'browserify-rails'
 gem 'device_detector'
 gem 'devise', '~> 4.1'
 gem 'dotiw'
@@ -32,6 +32,7 @@ gem 'phonelib'
 gem 'phony_rails'
 gem 'premailer-rails'
 gem 'proofer', github: '18F/identity-proofer-gem', tag: 'v1.1.2'
+gem 'rack-attack'
 gem 'rack-cors', require: 'rack/cors'
 gem 'rack-headers_filter'
 gem 'rack-timeout'
@@ -51,9 +52,11 @@ gem 'sinatra', require: false
 gem 'slim-rails'
 gem 'stringex'
 gem 'twilio-ruby'
-gem 'two_factor_authentication', github: 'Houdini/two_factor_authentication', ref: '1d6abe3'
+gem 'two_factor_authentication'
+gem 'typhoeus'
 gem 'uglifier', '>= 1.3.0'
 gem 'valid_email'
+gem 'webpacker', '~> 3.0'
 gem 'whenever', require: false
 gem 'xml-simple'
 gem 'xmlenc', '~> 0.6.4'
@@ -90,7 +93,6 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'rspec-rails', '~> 3.5.2'
   gem 'slim_lint'
-  gem 'teaspoon-mocha'
   gem 'thin'
 end
 
@@ -115,6 +117,7 @@ group :test do
 end
 
 group :production do
+  gem 'aamva', git: 'git@github.com:18F/identity-aamva-api-client-gem', tag: 'v1.0.2'
   gem 'equifax', git: 'git@github.com:18F/identity-equifax-api-client-gem.git', tag: 'v1.1.0'
   gem 'mandrill_dm'
 end

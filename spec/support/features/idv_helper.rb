@@ -10,30 +10,34 @@ module IdvHelper
   def fill_out_idv_form_ok
     fill_in 'profile_first_name', with: 'José'
     fill_in 'profile_last_name', with: 'One'
-    fill_in 'profile_ssn', with: '666-66-1234'
-    fill_in 'profile_dob', with: '01/02/1980'
     fill_in 'profile_address1', with: '123 Main St'
     fill_in 'profile_city', with: 'Nowhere'
-    select 'Kansas', from: 'profile_state'
+    select 'Virginia', from: 'profile_state'
     fill_in 'profile_zipcode', with: '66044'
+    fill_in 'profile_dob', with: '01/02/1980'
+    fill_in 'profile_ssn', with: '666-66-1234'
+    select "Driver's license", from: 'profile_state_id_type'
+    fill_in 'profile_state_id_number', with: '123456789'
   end
 
   def fill_out_idv_form_fail
     fill_in 'profile_first_name', with: 'Bad'
     fill_in 'profile_last_name', with: 'User'
-    fill_in 'profile_ssn', with: '666-66-6666'
-    fill_in 'profile_dob', with: '01/02/1900'
     fill_in 'profile_address1', with: '123 Main St'
     fill_in 'profile_city', with: 'Nowhere'
-    select 'Kansas', from: 'profile_state'
+    select 'Virginia', from: 'profile_state'
     fill_in 'profile_zipcode', with: '00000'
+    fill_in 'profile_dob', with: '01/02/1900'
+    fill_in 'profile_ssn', with: '666-66-6666'
+    select "Driver's license", from: 'profile_state_id_type'
+    fill_in 'profile_state_id_number', with: '123456789'
   end
 
   def fill_out_idv_previous_address_ok
     fill_in 'profile_prev_address1', with: '456 Other Ave'
     fill_in 'profile_prev_city', with: 'Elsewhere'
     select 'Missouri', from: 'profile_prev_state'
-    fill_in 'profile_prev_zipcode', with: '12345'
+    fill_in 'profile_prev_zipcode', with: '64000'
   end
 
   def fill_out_idv_previous_address_fail
@@ -43,12 +47,14 @@ module IdvHelper
     fill_in 'profile_prev_zipcode', with: '00000'
   end
 
-  def fill_out_financial_form_ok
-    fill_in :idv_finance_form_ccn, with: '12345678'
+  def fill_out_idv_state_fail
+    select 'Alabama', from: 'profile_state'
+    expect(page).to have_content t('idv.errors.unsupported_jurisdiction')
   end
 
-  def fill_out_financial_form_fail
-    fill_in :idv_finance_form_ccn, with: '00000000'
+  def fill_out_idv_state_ok
+    select 'California', from: 'profile_state'
+    expect(page).to have_no_content t('idv.errors.unsupported_jurisdiction')
   end
 
   def fill_out_phone_form_ok(phone = '415-555-0199')
@@ -68,11 +74,19 @@ module IdvHelper
   end
 
   def click_idv_address_choose_phone
-    click_link t('idv.buttons.activate_by_phone')
+    # we're capturing the click on the label element via the unique "for" attribute
+    # which matches against the radio button's ID,
+    # so that we can capture any click within the label.
+    find("label[for='address_delivery_method_phone']").click
+    click_on t('forms.buttons.continue')
   end
 
   def click_idv_address_choose_usps
-    click_link t('idv.buttons.activate_by_mail')
+    # we're capturing the click on the label element via the unique "for" attribute
+    # which matches against the radio button's ID,
+    # so that we can capture any click within the label.
+    find("label[for='address_delivery_method_usps']").click
+    click_on t('forms.buttons.continue')
   end
 
   def choose_idv_otp_delivery_method_sms
@@ -104,13 +118,11 @@ module IdvHelper
   def complete_idv_profile_ok(user, password = user_password)
     fill_out_idv_form_ok
     click_idv_continue
-    fill_out_financial_form_ok
-    click_idv_continue
     click_idv_address_choose_phone
     fill_out_phone_form_ok(user.phone)
     click_idv_continue
     fill_in 'Password', with: password
-    click_submit_default
+    click_continue
   end
 
   def visit_idp_from_sp_with_loa3(sp)

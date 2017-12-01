@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # Specify the Ruby version you desire here
-      - image: circleci/ruby:2.3.5-node-browsers
+      - image: circleci/ruby:2.3.6-node-browsers
         environment:
           RAILS_ENV: test
           CC_TEST_REPORTER_ID: faecd27e9aed532634b3f4d3e251542d7de9457cfca96a94208a63270ef9b42e
@@ -56,15 +56,14 @@ jobs:
       - run:
           name: Test Setup
           command: |
-            npm install
-            npm run build
+            yarn install
+            yarn build
             cp config/application.yml.example config/application.yml
             cp certs/saml.crt.example certs/saml.crt
             cp keys/saml.key.enc.example keys/saml.key.enc
             cp keys/equifax_rsa.example keys/equifax_rsa
             gpg --dearmor < keys/equifax_gpg.pub.example > keys/equifax_gpg.pub.bin
             gpg --import keys/equifax_gpg.example
-            bundle exec rake db:setup --trace
             bundle exec rake assets:precompile
 
       - run:
@@ -74,7 +73,7 @@ jobs:
             ./cc-test-reporter before-build
 
             bundle exec rspec --format progress
-            bundle exec teaspoon
+            yarn test
             bundle exec slim-lint app/views
 
       - run:
