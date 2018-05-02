@@ -265,10 +265,10 @@ login.gov team for credentials and other values.
 
 ### Managing translation files
 
-To help us handle extra newlines and make sure we wrap lines consistently, we have a script called `./script/normalize-yaml` that helps format YAML consistently. After importing translations (or making changes to the *.yml files with strings, run this for the IDP app:
-
+After importing translations, or making changes to the *.yml files with strings run
 ```
 $ make normalize_yaml
 ```
+to help us handle extra newlines and make sure we wrap lines consistently.
 
 [mac-test-passphrase-prompt]: mac-test-passphrase-prompt.png "Mac Test Passphrase Prompt"
