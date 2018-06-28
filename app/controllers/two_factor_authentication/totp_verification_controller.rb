@@ -9,7 +9,7 @@ module TwoFactorAuthentication
     end
 
     def create
-      result = TotpVerificationForm.new(current_user, params[:code].strip).submit
+      result = TotpVerificationForm.new(user: current_user, code: params[:code].strip).submit
 
       analytics.track_event(Analytics::MULTI_FACTOR_AUTH, result.to_h)
 
@@ -22,10 +22,17 @@ module TwoFactorAuthentication
 
     private
 
-    def confirm_totp_enabled
-      return if current_user.totp_enabled?
+    def configuration_manager
+      @configuration_manager ||=
+        TwoFactorAuthentication::TotpConfigurationManager.new(current_user)
+    end
 
-      redirect_to user_two_factor_authentication_url
+    def presenter_for_two_factor_authentication_method
+      TwoFactorAuthentication::TotpVerifyPresenter.new(configuration_manger, view_context)
+    end
+
+    def confirm_totp_enabled
+      redirect_to user_two_factor_authentication_url unless configuration_manager.enabled?
     end
   end
 end

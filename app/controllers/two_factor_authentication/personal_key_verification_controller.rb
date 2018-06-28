@@ -66,5 +66,10 @@ module TwoFactorAuthentication
       redirect_to manage_personal_key_url
       reset_otp_session_data
     end
+
+    def configuration_manager
+      @configuration_manager =
+        TwoFactorAuthentication::PersonalKeyConfigurationManager.new(current_user)
+    end
   end
 end

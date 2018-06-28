@@ -10,7 +10,7 @@ module TwoFactorAuthentication
       if params[:token]
         process_token
       else
-        @presenter = presenter_for_two_factor_authentication_method
+        @presenter = configuration_manager.verify_presenter(view_context)
       end
     end
 
@@ -39,15 +39,13 @@ module TwoFactorAuthentication
     end
 
     def next_step
-      return account_recovery_setup_url unless current_user.phone_enabled?
+      return account_recovery_setup_url unless backup_2fa_configured?
 
       after_otp_verification_confirmation_url
     end
 
     def handle_invalid_piv_cac
       clear_piv_cac_information
-      # create new nonce for retry
-      create_piv_cac_nonce
       handle_invalid_otp(type: 'piv_cac')
     end
 
@@ -63,24 +61,24 @@ module TwoFactorAuthentication
     end
 
     def piv_cac_verfication_form
-      @piv_cac_verification_form ||= UserPivCacVerificationForm.new(
-        user: current_user,
+      @piv_cac_verification_form ||= # UserPivCacVerificationForm.new(
+        # user: current_user,
+      configuration_manager.verify_form(
         token: params[:token],
         nonce: piv_cac_nonce
       )
     end
 
     def confirm_piv_cac_enabled
-      return if current_user.piv_cac_enabled?
-
-      redirect_to user_two_factor_authentication_url
+      redirect_to user_two_factor_authentication_url unless configuration_manager.enabled?
     end
 
     def presenter_for_two_factor_authentication_method
-      TwoFactorAuthCode::PivCacAuthenticationPresenter.new(
-        view: view_context,
-        data: piv_cac_view_data
-      )
+      configuration_manager.verify_presenter(view_context)
+      # TwoFactorAuthCode::PivCacAuthenticationPresenter.new(
+      #   view: view_context,
+      #   data: piv_cac_view_data
+      # )
     end
 
     def analytics_properties
@@ -88,6 +86,23 @@ module TwoFactorAuthentication
         context: context,
         multi_factor_auth_method: 'piv_cac',
       }
+    end
+
+    def method_manager
+      @method_manager = TwoFactorAuthentication::MethodManager.new(current_user)
+    end
+
+    def configuration_manager
+      @configuration_manager = method_manager.configuration_manager(:piv_cac)
+    end
+
+    # ultimately, we want to do account recovery setup if the user has only the piv/cac
+    # configured. Don't count remember device or personal key since personal key will come
+    # after anyways.
+    def backup_2fa_configured?
+      %i[sms voice].any? do |method|
+        method_manager.configuration_manager(method).enabled?
+      end
     end
   end
 end

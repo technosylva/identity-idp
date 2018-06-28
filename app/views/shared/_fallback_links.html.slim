@@ -1,3 +1,5 @@
 p.mt3#code-instructs = @presenter.help_text
-- presenter.fallback_links.each do |link|
-  p = link
+- presenter.fallback_options.each do |option|
+  div
+    h1 = option.label
+    p = option.info

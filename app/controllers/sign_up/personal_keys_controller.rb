@@ -20,11 +20,13 @@ module SignUp
 
     def confirm_user_needs_initial_personal_key
       redirect_to(account_url) if user_session[:personal_key].nil? &&
-                                  current_user.personal_key.present?
+                                  configuration_manager.configured? 
+                                  # current_user.personal_key.present?
     end
 
     def assign_initial_personal_key
-      user_session[:personal_key] = create_new_code if current_user.personal_key.nil?
+      return if configuration_manager.configured? # current_user.personal_key.present?
+      user_session[:personal_key] = configuration_manager.create_new_code(user_session)
     end
 
     def next_step
@@ -35,6 +37,11 @@ module SignUp
       else
         after_sign_in_path_for(current_user)
       end
+    end
+
+    def configuration_manager
+      @configuration_manager ||=
+        TwoFactorAuthentication::PersonalKeyConfigurationManager.new(current_user)
     end
   end
 end

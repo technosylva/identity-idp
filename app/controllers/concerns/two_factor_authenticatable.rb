@@ -85,6 +85,12 @@ module TwoFactorAuthenticatable
     params[:otp_delivery_preference] || request.path.split('/').last
   end
 
+  def configuration_manager
+    @configuration_manager ||= TwoFactorAuthentication::MethodManager.
+      new(current_user).
+      configuration_manager(two_factor_authentication_method)
+  end
+
   # Method will be renamed in the next refactor.
   # You can pass in any "type" with a corresponding I18n key in
   # devise.two_factor_authentication.invalid_#{type}
@@ -101,7 +107,7 @@ module TwoFactorAuthenticatable
   end
 
   def render_show_after_invalid
-    @presenter = presenter_for_two_factor_authentication_method
+    @presenter = error_presenter_for_two_factor_authentication_method
     render :show
   end
 
@@ -262,6 +268,7 @@ module TwoFactorAuthenticatable
       personal_key_unavailable: personal_key_unavailable?,
       has_piv_cac_configured: current_user.piv_cac_enabled?,
       reauthn: reauthn?,
+      configuration_manager: configuration_manager
     }
   end
 
@@ -312,5 +319,9 @@ module TwoFactorAuthenticatable
       data: data,
       view: view_context
     )
+  end
+
+  def error_presenter_for_two_factor_authentication_method
+    presenter_for_two_factor_authentication_method
   end
 end

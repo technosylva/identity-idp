@@ -3,6 +3,10 @@ module TwoFactorAuthCode
     include Rails.application.routes.url_helpers
     include ActionView::Helpers::TranslationHelper
 
+    def title
+      t('titles.present_piv_cac')
+    end
+
     def header
       t('devise.two_factor_authentication.piv_cac_header_text')
     end

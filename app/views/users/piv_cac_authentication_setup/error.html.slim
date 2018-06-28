@@ -3,7 +3,7 @@
 div class='alert alert-error' role='alert'
   = @presenter.title
 
-h1.h3.my0 = @presenter.heading
+h1.h3.my0 = @presenter.header
 
 p.mt-tiny.mb3 = @presenter.description
 
@@ -25,5 +25,3 @@ p.mt-tiny.mb3 = @presenter.description
       user_signing_up: user_signing_up?
   - else
     = link_to cancel_link_text, cancel, class: 'h5'
-
-== javascript_pack_tag 'clipboard'

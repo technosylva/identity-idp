@@ -1,4 +1,4 @@
-- title t('titles.enter_2fa_code')
+- title = @presenter.title
 
 h1.h3.my0 = @presenter.header
 
@@ -15,12 +15,7 @@ p == @presenter.phone_number_message
       'aria-describedby': 'code-instructs', maxlength: Devise.direct_otp_length,
       autocomplete: 'off', type: 'tel')
   = submit_tag t('forms.buttons.submit.default'), class: 'btn btn-primary align-top'
-  - if @presenter.remember_device_available?
-    .border.col-9.rounded-lg.mt2
-      = check_box_tag 'remember_device', true, false, class: 'my2 ml2 mr1'
-      = label_tag 'remember_device',
-        t('forms.messages.remember_device', duration: Figaro.env.remember_device_expiration_days),
-        class: 'blue'
+  = render 'shared/remember_device', presenter: @presenter
 
 = render 'shared/fallback_links', presenter: @presenter
 = render 'shared/cancel', link: @presenter.cancel_link

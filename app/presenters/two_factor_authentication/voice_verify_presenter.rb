@@ -1,5 +1,5 @@
-module TwoFactorAuthCode
-  class PhoneDeliveryPresenter < TwoFactorAuthCode::GenericDeliveryPresenter
+module TwoFactorAuthentication
+  class VoiceVerifyPresenter < VerifyPresenter
     def title
       t('titles.enter_2fa_code')
     end
@@ -9,23 +9,14 @@ module TwoFactorAuthCode
     end
 
     def phone_number_message
-      t("instructions.mfa.#{otp_delivery_preference}.number_message",
+      t('instructions.mfa.voice.number_message',
         number: content_tag(:strong, phone_number),
         expiration: Figaro.env.otp_valid_for)
     end
 
     def help_text
-      t("instructions.mfa.#{otp_delivery_preference}.confirm_code_html",
+      t('instructions.mfa.voice.confirm_code_html',
         resend_code_link: resend_code_link)
-    end
-
-    def fallback_links
-      [
-        otp_fallback_options,
-        update_phone_link,
-        piv_cac_option,
-        personal_key_link,
-      ].compact
     end
 
     def cancel_link
@@ -81,38 +72,19 @@ module TwoFactorAuthCode
 
     def phone_link_tag
       view.link_to(
-        t("links.two_factor_authentication.#{fallback_method}"),
+        t("links.two_factor_authentication.sms"),
         otp_send_path(locale: LinkLocaleResolver.locale, otp_delivery_selection_form:
-          { otp_delivery_preference: fallback_method })
-      )
-    end
-
-    def auth_app_fallback_link
-      t('links.phone_confirmation.auth_app_fallback_html', link: auth_app_fallback_tag)
-    end
-
-    def auth_app_fallback_tag
-      view.link_to(
-        t('links.two_factor_authentication.app'),
-        login_two_factor_authenticator_path(locale: LinkLocaleResolver.locale)
+          { otp_delivery_preference: 'sms' })
       )
     end
 
     def fallback_instructions
-      "instructions.mfa.#{otp_delivery_preference}.fallback_html"
-    end
-
-    def fallback_method
-      if otp_delivery_preference == 'voice'
-        'sms'
-      elsif otp_delivery_preference == 'sms'
-        'voice'
-      end
+      "instructions.mfa.voice.fallback_html"
     end
 
     def resend_code_link
       view.link_to(
-        t("links.two_factor_authentication.resend_code.#{otp_delivery_preference}"),
+        t("links.two_factor_authentication.resend_code.voice"),
         otp_send_path(locale: LinkLocaleResolver.locale,
                       otp_delivery_selection_form:
                         { otp_delivery_preference: otp_delivery_preference, resend: true })
