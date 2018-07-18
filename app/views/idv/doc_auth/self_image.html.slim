@@ -1,0 +1,19 @@
+-title 'Document Authentication'
+
+h1.h3 Let's verify your state ID
+
+p Finally, take a selfie!!!
+
+= simple_form_for(:doc_auth, url: idv_doc_auth_step_path(step: :self_image), method: 'PUT',
+    html: { autocomplete: 'off', role: 'form', class: 'mt2' }) do |f|
+  .clearfix.mxn1
+    .sm-col.sm-col-6.px1
+      = f.input :image, label: false, as: 'file', required: true
+
+  p = message
+
+  .mt4
+    button type='submit' class='btn btn-primary btn-wide sm-col-6 col-12'
+      = t('forms.buttons.continue')
+
+= render 'shared/cancel', link: idv_cancel_path

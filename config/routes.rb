@@ -202,6 +202,9 @@ Rails.application.routes.draw do
         get '/jurisdiction' => 'jurisdiction#new'
         post '/jurisdiction' => 'jurisdiction#create'
         get '/jurisdiction/failure/:reason' => 'jurisdiction#failure', as: :jurisdiction_failure
+        get '/doc_auth' => 'doc_auth#index'
+        get '/doc_auth/:step' => 'doc_auth#show', as: :doc_auth_step
+        put '/doc_auth/:step' => 'doc_auth#update'
       end
     end
 
