@@ -203,6 +203,7 @@ Rails.application.routes.draw do
         post '/jurisdiction' => 'jurisdiction#create'
         get '/jurisdiction/failure/:reason' => 'jurisdiction#failure', as: :jurisdiction_failure
         get '/doc_auth' => 'doc_auth#index'
+        get '/doc_auth/clear' => 'doc_auth#clear' # TODO - REMOVE!!!!
         get '/doc_auth/:step' => 'doc_auth#show', as: :doc_auth_step
         put '/doc_auth/:step' => 'doc_auth#update'
       end

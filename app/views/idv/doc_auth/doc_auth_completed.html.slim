@@ -1,0 +1,22 @@
+-title 'Document Authentication'
+
+h1.h3 Document Authentication Completed!
+
+= form_for('', url: idv_doc_auth_step_path(step: :doc_auth_confirmation), method: 'PUT',
+    html: { autocomplete: 'off', role: 'form', class: 'mt2' }) do |f|
+
+  - f.simple_fields_for :doc_auth do |ff|
+
+    = ff.input :image, label: false, as: :hidden, required: true
+
+    ul
+      - doc_auth_session[:image_verification_data].each do |name, value|
+        li = "#{name}: #{value}"
+
+    p = doc_auth_session[:error_message]
+
+    .mt4
+      button type='submit' class='btn btn-primary btn-wide sm-col-6 col-12'
+        = t('forms.buttons.continue')
+
+= render 'shared/cancel', link: idv_cancel_path

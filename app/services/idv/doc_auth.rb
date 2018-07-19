@@ -14,19 +14,18 @@ module Idv
     end
 
     class Result
-      attr_reader :status, :message
+      attr_reader :status
 
       def self.success
         new(:success)
       end
 
-      def self.failure(message)
-        new(:failure, message)
+      def self.failure
+        new(:failure)
       end
 
-      def initialize(status, message=nil)
+      def initialize(status)
         @status = status
-        @message = message
       end
 
       def success?
@@ -53,6 +52,10 @@ module Idv
       id_verification_failed: {
         requires: :id_verified,
       },
+      id_data_confirmation: {
+        requires: :id_data_confirmation,
+        handler: :handle_id_data_confirmation
+      },
       self_image: {
         requires: :self_image,
         handler: :handle_self_image
@@ -60,6 +63,10 @@ module Idv
       image_verification_failed: {
         requires: :image_verified,
       },
+      doc_auth_completed: {
+        requires: :doc_auth_confirmation,
+        handler: :handle_doc_auth_confirmation
+      }
     }.freeze
 
     def initialize(session)
@@ -76,56 +83,78 @@ module Idv
     end
 
     def handle(step, params)
+      @session[:error_message] = nil
       handler = STEPS.dig(step.to_sym, :handler)
-      return send(handler, params.fetch(:image)) if handler
-      Result.failure("Unhandled step #{step}")
+      return send(handler, params) if handler
+      failure("Unhandled step #{step}")
     end
 
     def completed?
       next_step == :doc_auth_succeeded
     end
 
-    def handle_front_image(image)
+    def handle_front_image(params)
+      image = params.fetch(:image)
+
       status, data = create_document
-      return Result.failure(data) if status == :error
+      return failure(data) if status == :error
 
       @session[:instance_id] = data
 
       image_content = image.read
 
       status, data = upload_front_image(image_content)
-      return Result.failure(data) if status == :error
+      return failure(data) if status == :error
 
       @session[:front_image] = ImageCache.put(image_content)
       Result.success
     end
 
-    def handle_back_image(image)
+    def handle_back_image(params)
+      image = params.fetch(:image)
+
       image_content = image.read
 
       status, data = upload_back_image(image_content)
-      return Result.failure(data) if status == :error
+      return failure(data) if status == :error
 
       @session[:back_image] = ImageCache.put(image_content)
 
       status, data = verify_document
-      return Result.failure(data) if status == :error
+      return failure(data) if status == :error
 
       @session[:id_verified] = true
-      @session[:id_verification_data] = data
+      @session[:id_data] = data
       Result.success
     end
 
-    def handle_self_image(image)
+    def handle_id_data_confirmation(_params)
+      @session[:id_data_confirmation] = true
+      Result.success
+    end
+
+    def handle_self_image(params)
+      image = params.fetch(:image)
+
       image_content = image.read
 
       status, data = verify_image(image_content)
-      return Result.failure(data) if status == :error
+      return failure(data) if status == :error
 
       @session[:self_image] = ImageCache.put(image_content)
       @session[:image_verified] = true
       @session[:image_verification_data] = data
       Result.success
+    end
+
+    def handle_doc_auth_confirmation
+      @session[:doc_auth_confirmation] = true
+      Result.success
+    end
+
+    def failure(message)
+      @session[:error_message] = message
+      Result.failure
     end
 
     def create_document

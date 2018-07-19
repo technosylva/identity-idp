@@ -1,8 +1,6 @@
 -title 'Document Authentication'
 
-h1.h3 Let's verify your state ID
-
-p Finally, take a selfie!!!
+h1.h3 Take a selfie!!
 
 = simple_form_for(:doc_auth, url: idv_doc_auth_step_path(step: :self_image), method: 'PUT',
     html: { autocomplete: 'off', role: 'form', class: 'mt2' }) do |f|
@@ -10,7 +8,7 @@ p Finally, take a selfie!!!
     .sm-col.sm-col-6.px1
       = f.input :image, label: false, as: 'file', required: true
 
-  p = message
+  p = doc_auth_session[:error_message]
 
   .mt4
     button type='submit' class='btn btn-primary btn-wide sm-col-6 col-12'

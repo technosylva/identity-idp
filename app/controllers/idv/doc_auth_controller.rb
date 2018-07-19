@@ -8,12 +8,17 @@ module Idv
 
     attr_accessor :doc_auth
 
+    def clear
+      remove_user_session_doc_auth
+      redirect_to idv_doc_auth_url
+    end
+
     def index
       redirect_to_step(doc_auth.next_step)
     end
 
     def show
-      render_step(params[:step])
+      render_step(params[:step], doc_auth.session)
     end
 
     def update
@@ -30,7 +35,7 @@ module Idv
         redirect_to_step(doc_auth.next_step) and return
       end
 
-      render_step(current_step, result.message)
+      render_step(current_step, doc_auth.session)
     end
 
     def doc_auth_params
@@ -43,8 +48,8 @@ module Idv
       @doc_auth ||= Idv::DocAuth.new(user_session_doc_auth)
     end
 
-    def render_step(step, message = nil)
-      render template: "idv/doc_auth/#{step}", locals: { message: message }
+    def render_step(step, doc_auth_session)
+      render template: "idv/doc_auth/#{step}", locals: { doc_auth_session: doc_auth_session }
     end
 
     def redirect_to_step(step)
