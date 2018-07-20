@@ -1,18 +1,5 @@
 module Idv
   class DocAuth
-    class ImageCache
-      CACHE = {}
-      def self.put(image)
-        uuid = SecureRandom.uuid
-        CACHE[uuid] = image
-        uuid
-      end
-
-      def self.get(uuid)
-        CACHE[uuid]
-      end
-    end
-
     class Result
       attr_reader :status
 
@@ -101,30 +88,39 @@ module Idv
 
       @session[:instance_id] = data
 
-      image_content = image.read
-
-      status, data = upload_front_image(image_content)
+      status, data = upload_front_image(image.read)
       return failure(data) if status == :error
 
-      @session[:front_image] = ImageCache.put(image_content)
+      @session[:front_image] = true
       Result.success
     end
 
     def handle_back_image(params)
       image = params.fetch(:image)
 
-      image_content = image.read
-
-      status, data = upload_back_image(image_content)
+      status, data = upload_back_image(image.read)
       return failure(data) if status == :error
 
-      @session[:back_image] = ImageCache.put(image_content)
+      @session[:back_image] = true
 
       status, data = verify_document
       return failure(data) if status == :error
 
       @session[:id_verified] = true
       @session[:id_data] = data
+
+      status, data = get_front_image
+      return failure(data) if status == :error
+      @session[:front_image_content] = data if data
+
+      status, data = get_back_image
+      return failure(data) if status == :error
+      @session[:back_image_content] = data if data
+
+      # status, data = assure_id.get_face_image(@session[:instance_id])
+      # return failure(data) if status == :error
+      # @session[:face_image_content] = data if data
+
       Result.success
     end
 
@@ -136,12 +132,10 @@ module Idv
     def handle_self_image(params)
       image = params.fetch(:image)
 
-      image_content = image.read
-
-      status, data = verify_image(image_content)
+      status, data = verify_image(image.read)
       return failure(data) if status == :error
 
-      @session[:self_image] = ImageCache.put(image_content)
+      @session[:self_image] = true
       @session[:image_verified] = true
       @session[:image_verification_data] = data
       Result.success
@@ -169,15 +163,31 @@ module Idv
       assure_id.post_back_image(@session[:instance_id], image)
     end
 
+    def get_front_image(image)
+      assure_id.get_front_image(@session[:instance_id])
+    end
+
+    def get_back_image(image)
+      assure_id.get_back_image(@session[:instance_id])
+    end
+
+    def get_face_image(image)
+      assure_id.get_face_image(@session[:instance_id])
+    end
+
     def verify_document
       assure_id.get_results(@session[:instance_id])
     end
 
     # Obviously not ideal
     def verify_image(self_image)
+
+      status, data = get_face_image
+      return failure(data) if status == :error
+
       Tempfile.open('foo', encoding: 'ascii-8bit') do |f1|
         Tempfile.open('foo', encoding: 'ascii-8bit') do |f2|
-          f1.write(ImageCache.get(@session[:front_image]))
+          f1.write(data)
           f1.write(self_image)
           facial_match.verify_image(f1, f2)
         end

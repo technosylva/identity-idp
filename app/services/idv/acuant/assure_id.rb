@@ -3,6 +3,9 @@ module Idv
     class AssureId
       include Idv::Acuant::Http
 
+      FRONT = 0
+      BACK = 1
+
       base_uri 'https://services.assureid.net'
 
       def initialize(cfg = default_cfg)
@@ -23,11 +26,11 @@ module Idv
       end
 
       def post_front_image(instance_id, image)
-        post_image(instance_id, image, 0)
+        post_image(instance_id, image, FRONT)
       end
 
       def post_back_image(instance_id, image)
-        post_image(instance_id, image, 1)
+        post_image(instance_id, image, BACK)
       end
 
       def post_image(instance_id, image, side)
@@ -53,12 +56,36 @@ module Idv
         get(url, options, &JSON.method(:parse))
       end
 
+      def get_front_image(instance_id)
+        get_image(instance_id, FRONT)
+      end
+
+      def get_back_image(instance_id)
+        get_image(instance_id, BACK)
+      end
+
+      def get_image(instance_id, side)
+        url = "/AssureIDService/Document/#{instance_id}/Image?side=#{side}&light=0"
+
+        options = { basic_auth: @authentication_params }
+
+        get(url, options, &Base64.method(:encode64))
+      end
+
+      def get_face_image(instance_id)
+        url = "/AssureIDService/Document/#{instance_id}/Field/Image?key=Photo"
+
+        options = { basic_auth: @authentication_params }
+
+        get(url, options, &Base64.method(:encode64))
+      end
+
       private
 
       def image_params
         {
-          AuthenticationSensitivity: 0, # high
-          ClassificationMode: 0,
+          AuthenticationSensitivity: 0, # normal
+          ClassificationMode: 0, # automatic
           Device: {
             HasContactlessChipReader: false,
             HasMagneticStripeReader: false,
@@ -66,13 +93,13 @@ module Idv
             Type: {
               Manufacturer: 'xxx',
               Model: 'xxx',
-              SensorType: '1' #camera
+              SensorType: '3' # mobile
             }
           },
-          ImageCroppingExpectedSize: '1', #Id
-          ImageCroppingMode: '3', #always
+          ImageCroppingExpectedSize: '1', # id
+          ImageCroppingMode: '3', # always
           ManualDocumentType: nil,
-          ProcessMode: 0,
+          ProcessMode: 0, # default
           SubscriptionId: @subscription_id
         }.to_json
       end
