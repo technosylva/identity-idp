@@ -112,7 +112,7 @@ class UserDecorator
 
     sp_session = session[:sp]
 
-    user.personal_key.blank? && (sp_session.blank? || sp_session[:loa3] == false)
+    user.encrypted_recovery_code_digest.blank? && (sp_session.blank? || sp_session[:loa3] == false)
   end
 
   def recent_events
@@ -131,9 +131,9 @@ class UserDecorator
 
   def delete_account_bullet_key
     if identity_verified?
-      'users.delete.bullet_2_loa3'
+      I18n.t('users.delete.bullet_2_loa3', app: APP_NAME)
     else
-      'users.delete.bullet_2_loa1'
+      I18n.t('users.delete.bullet_2_loa1', app: APP_NAME)
     end
   end
 
