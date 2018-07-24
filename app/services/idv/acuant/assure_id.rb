@@ -97,7 +97,7 @@ module Idv
             }
           },
           ImageCroppingExpectedSize: '1', # id
-          ImageCroppingMode: '3', # always
+          ImageCroppingMode: '1', # automatic
           ManualDocumentType: nil,
           ProcessMode: 0, # default
           SubscriptionId: @subscription_id
