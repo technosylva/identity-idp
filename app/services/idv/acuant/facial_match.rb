@@ -2,8 +2,8 @@ module Idv
   module Acuant
     class FacialMatch
       include Idv::Acuant::Http
-      # debug_output $stderr
-      # default_timeout 60
+      # debug_output $stdout
+
       base_uri 'https://cssnwebservices.com/CSSNService/CardProcessor'
 
       def initialize(cfg = default_cfg)
@@ -28,7 +28,8 @@ module Idv
       end
 
       def headers
-        accept_json.merge(content_type_stream).merge(license_key_auth)
+        # accept_json.merge(content_type_stream).merge(license_key_auth)
+        accept_json.merge(license_key_auth)
       end
 
       def license_key_auth

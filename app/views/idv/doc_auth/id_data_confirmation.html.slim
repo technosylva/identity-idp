@@ -9,10 +9,6 @@ h1.h3 Please verify the data below is correct
 
     = ff.input :image, label: false, as: :hidden, required: true
 
-    img src="data:image/jpg;base64,#{doc_auth_session[:front_image_content]}"
-    img src="data:image/jpg;base64,#{doc_auth_session[:back_image_content]}"
-    / img src="data:image/jpg;base64,#{doc_auth_session[:face_image_content]}"
-
     h4 Result
     h5 = doc_auth_session[:id_data][:Result]
 

@@ -92,7 +92,8 @@ module Idv
       return failure(data) if status == :error
 
       @session[:front_image] = true
-      Result.success
+
+      success
     end
 
     def handle_back_image(params)
@@ -106,49 +107,63 @@ module Idv
       status, data = verify_document
       return failure(data) if status == :error
 
+      if data.fetch('Result') != 1
+        alerts = data.
+          fetch('Alerts').
+          reject { |alert| alert.fetch('Result') == 2 }.
+          map { |alert| alert.fetch('Actions') }
+        return failure(alerts)
+      end
+
       @session[:id_verified] = true
       @session[:id_data] = data
 
-      status, data = get_front_image
-      return failure(data) if status == :error
-      @session[:front_image_content] = data if data
+      # status, data = get_front_image
+      # return failure(data) if status == :error
+      # @session[:front_image_content] = data if data
 
-      status, data = get_back_image
-      return failure(data) if status == :error
-      @session[:back_image_content] = data if data
+      # status, data = get_back_image
+      # return failure(data) if status == :error
+      # @session[:back_image_content] = data if data
 
-      # status, data = assure_id.get_face_image(@session[:instance_id])
+      # status, data = get_face_image
       # return failure(data) if status == :error
       # @session[:face_image_content] = data if data
 
-      Result.success
+      success
     end
 
     def handle_id_data_confirmation(_params)
       @session[:id_data_confirmation] = true
-      Result.success
+      success
     end
 
     def handle_self_image(params)
       image = params.fetch(:image)
 
-      status, data = verify_image(image.read)
+      status, data = verify_image(image)
       return failure(data) if status == :error
 
       @session[:self_image] = true
       @session[:image_verified] = true
       @session[:image_verification_data] = data
-      Result.success
+
+      success
     end
 
     def handle_doc_auth_confirmation
       @session[:doc_auth_confirmation] = true
-      Result.success
+
+      success
     end
 
     def failure(message)
       @session[:error_message] = message
       Result.failure
+    end
+
+    def success
+      Result.success
     end
 
     def create_document
@@ -163,15 +178,15 @@ module Idv
       assure_id.post_back_image(@session[:instance_id], image)
     end
 
-    def get_front_image(image)
+    def get_front_image
       assure_id.get_front_image(@session[:instance_id])
     end
 
-    def get_back_image(image)
+    def get_back_image
       assure_id.get_back_image(@session[:instance_id])
     end
 
-    def get_face_image(image)
+    def get_face_image
       assure_id.get_face_image(@session[:instance_id])
     end
 
@@ -179,18 +194,13 @@ module Idv
       assure_id.get_results(@session[:instance_id])
     end
 
-    # Obviously not ideal
     def verify_image(self_image)
-
       status, data = get_face_image
       return failure(data) if status == :error
 
-      Tempfile.open('foo', encoding: 'ascii-8bit') do |f1|
-        Tempfile.open('foo', encoding: 'ascii-8bit') do |f2|
-          f1.write(data)
-          f1.write(self_image)
-          facial_match.verify_image(f1, f2)
-        end
+      decoded_self_image = Base64.decode64(self_image.sub('data:image/png;base64,', ''))
+      tmp_images(data, decoded_self_image) do |tmp_images|
+        facial_match.verify_image(*tmp_images)
       end
     end
 
@@ -200,6 +210,22 @@ module Idv
 
     def facial_match
       @facial_match ||= Idv::Acuant::FacialMatch.new
+    end
+
+    # Not ideal, but currently functional
+    def tmp_images(*images)
+      tmp_files = images.map do |image|
+        Tempfile.open('foo', encoding: 'ascii-8bit').tap do |tmp|
+          tmp.write(image)
+          tmp.rewind
+        end
+      end
+      yield tmp_files
+    ensure
+      tmp_files.each do |tmp|
+        tmp.close
+        tmp.unlink
+      end
     end
   end
 end

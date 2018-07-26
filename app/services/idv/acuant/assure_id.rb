@@ -3,10 +3,10 @@ module Idv
     class AssureId
       include Idv::Acuant::Http
 
+      base_uri 'https://services.assureid.net'
+
       FRONT = 0
       BACK = 1
-
-      base_uri 'https://services.assureid.net'
 
       def initialize(cfg = default_cfg)
         @subscription_id = cfg.fetch(:subscription_id)
@@ -16,13 +16,12 @@ module Idv
       def create_document
         url = '/AssureIDService/Document/Instance'
 
-        options = {
+        options = default_options.merge(
           headers: content_type_json,
-          body: image_params,
-          basic_auth: @authentication_params,
-        }
+          body: image_params
+        )
 
-        post(url, options) { |body| body.gsub('"', '') }
+        post(url, options) { |body| body.delete('"') }
       end
 
       def post_front_image(instance_id, image)
@@ -36,11 +35,10 @@ module Idv
       def post_image(instance_id, image, side)
         url = "/AssureIDService/Document/#{instance_id}/Image?side=#{side}&light=0"
 
-        options = {
+        options = default_options.merge(
           headers: accept_json,
-          body: image,
-          basic_auth: @authentication_params,
-        }
+          body: image
+        )
 
         post(url, options)
       end
@@ -48,10 +46,9 @@ module Idv
       def get_results(instance_id)
         url = "/AssureIDService/Document/#{instance_id}"
 
-        options = {
-          headers: accept_json,
-          basic_auth: @authentication_params,
-        }
+        options = default_options.merge(
+          headers: accept_json
+        )
 
         get(url, options, &JSON.method(:parse))
       end
@@ -67,17 +64,13 @@ module Idv
       def get_image(instance_id, side)
         url = "/AssureIDService/Document/#{instance_id}/Image?side=#{side}&light=0"
 
-        options = { basic_auth: @authentication_params }
-
-        get(url, options, &Base64.method(:encode64))
+        get(url, default_options, &Base64.method(:encode64))
       end
 
       def get_face_image(instance_id)
         url = "/AssureIDService/Document/#{instance_id}/Field/Image?key=Photo"
 
-        options = { basic_auth: @authentication_params }
-
-        get(url, options, &Base64.method(:encode64))
+        get(url, default_options)
       end
 
       private
@@ -100,7 +93,7 @@ module Idv
           ImageCroppingMode: '1', # automatic
           ManualDocumentType: nil,
           ProcessMode: 0, # default
-          SubscriptionId: @subscription_id
+          SubscriptionId: @subscription_id,
         }.to_json
       end
 
@@ -110,6 +103,10 @@ module Idv
           username: env.acuant_assure_id_username,
           password: env.acuant_assure_id_password,
         }
+      end
+
+      def default_options
+        { basic_auth: @authentication_params }
       end
     end
   end

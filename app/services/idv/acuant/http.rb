@@ -17,8 +17,8 @@ module Idv
 
       def handle_response(response, block)
         return [:error, response.message] unless success?(response)
-        data = block ? block.call(response.body) : nil
-        [:success, data].compact
+        data = block ? block.call(response.body) : response.body
+        [:success, data]
       end
 
       private

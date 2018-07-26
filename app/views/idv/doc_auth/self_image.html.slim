@@ -2,16 +2,23 @@
 
 h1.h3 Take a selfie!!
 
-= simple_form_for(:doc_auth, url: idv_doc_auth_step_path(step: :self_image), method: 'PUT',
+video id='player' controls=true autoplay=true
+button id='capture' = 'Capture'
+canvas id='canvas' width=320 height=240
+
+= form_for('', url: idv_doc_auth_step_path(step: :self_image), method: 'PUT',
     html: { autocomplete: 'off', role: 'form', class: 'mt2' }) do |f|
-  .clearfix.mxn1
-    .sm-col.sm-col-6.px1
-      = f.input :image, label: false, as: 'file', required: true
 
-  p = doc_auth_session[:error_message]
+  - f.simple_fields_for :doc_auth do |ff|
 
-  .mt4
-    button type='submit' class='btn btn-primary btn-wide sm-col-6 col-12'
-      = t('forms.buttons.continue')
+    = ff.input :image, label: false, as: :hidden, required: true
+
+    p = doc_auth_session[:error_message]
+
+    .mt4
+      button type='submit' class='btn btn-primary btn-wide sm-col-6 col-12'
+        = t('forms.buttons.continue')
 
 = render 'shared/cancel', link: idv_cancel_path
+
+== javascript_pack_tag 'doc-auth'
