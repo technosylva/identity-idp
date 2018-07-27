@@ -35,10 +35,6 @@ module Idv
         { 'Content-Type' => 'application/json' }
       end
 
-      def content_type_stream
-        { 'Content-Type' => 'application/octet-stream; charset=utf-8;' }
-      end
-
       def env
         Figaro.env
       end

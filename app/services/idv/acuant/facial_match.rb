@@ -2,7 +2,6 @@ module Idv
   module Acuant
     class FacialMatch
       include Idv::Acuant::Http
-      # debug_output $stdout
 
       base_uri 'https://cssnwebservices.com/CSSNService/CardProcessor'
 
@@ -28,7 +27,6 @@ module Idv
       end
 
       def headers
-        # accept_json.merge(content_type_stream).merge(license_key_auth)
         accept_json.merge(license_key_auth)
       end
 
