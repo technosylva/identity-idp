@@ -10,13 +10,14 @@ module Idv
     before_action :confirm_idv_attempts_allowed, except: %i[success failure]
     before_action :confirm_idv_needed
     before_action :confirm_step_needed, except: [:success]
-    before_action :initialize_idv_session, only: [:create]
+    before_action :initialize_idv_session_from_params, only: [:create]
     before_action :refresh_if_not_ready, only: [:show]
 
     delegate :attempts_exceeded?, to: :step, prefix: true
 
     def new
       user_session[:context] = 'idv'
+      initialize_idv_session_from_id if user_session[:id_profile]
       set_idv_form
       @selected_state = user_session[:idv_jurisdiction]
       analytics.track_event(Analytics::IDV_BASIC_INFO_VISIT)
@@ -90,11 +91,17 @@ module Idv
       @idv_form ||= Idv::ProfileForm.new((idv_session.params || {}), current_user)
     end
 
-    def initialize_idv_session
+    def initialize_idv_session_from_params
       idv_session.params = profile_params.to_h
       idv_session.params[:state_id_jurisdiction] = profile_params[:state]
       idv_session.applicant = idv_session.vendor_params
     end
+
+    def initialize_idv_session_from_id
+      idv_session.params = user_session[:id_profile].to_h
+      idv_session.applicant = idv_session.vendor_params
+    end
+
 
     def profile_params
       params.require(:profile).permit(Idv::ProfileForm::PROFILE_ATTRIBUTES)

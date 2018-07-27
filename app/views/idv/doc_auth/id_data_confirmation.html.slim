@@ -9,22 +9,12 @@ h1.h3 Please verify the data below is correct
 
     = ff.input :image, label: false, as: :hidden, required: true
 
-    h4 Result
-    h5 = doc_auth_session[:id_data][:Result]
-
     h4 Profile
     ul
       - doc_auth_session[:id_data][:Fields].each do |field|
         li = "#{field[:Name]}: #{field[:Value]}"
 
-    h4 Alerts
-    ul
-      - doc_auth_session[:id_data][:Alerts].each do |field|
-        li = "#{field[:Name]} - #{field[:Result]}: #{field[:Disposition]}"
-
     p = doc_auth_session[:error_message]
-
-    p = doc_auth_session[:id_data].to_json
 
     .mt4
       button type='submit' class='btn btn-primary btn-wide sm-col-6 col-12'

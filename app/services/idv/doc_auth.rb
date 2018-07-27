@@ -30,30 +30,27 @@ module Idv
     STEPS = {
       front_image: {
         requires: :front_image,
-        handler: :handle_front_image
+        handler: :handle_front_image,
       },
       back_image: {
         requires: :back_image,
-        handler: :handle_back_image
+        handler: :handle_back_image,
       },
       id_verification_failed: {
         requires: :id_verified,
       },
       id_data_confirmation: {
         requires: :id_data_confirmation,
-        handler: :handle_id_data_confirmation
+        handler: :handle_id_data_confirmation,
       },
       self_image: {
         requires: :self_image,
-        handler: :handle_self_image
-      },
-      image_verification_failed: {
-        requires: :image_verified,
+        handler: :handle_self_image,
       },
       doc_auth_completed: {
         requires: :doc_auth_confirmation,
-        handler: :handle_doc_auth_confirmation
-      }
+        handler: :handle_doc_auth_confirmation,
+      },
     }.freeze
 
     def initialize(session)
@@ -62,7 +59,7 @@ module Idv
 
     def next_step
       # Find the first requirement that is not satisfied
-      step, _config = STEPS.detect do |step, config|
+      step, _config = STEPS.detect do |_step, config|
         key = config.fetch(:requires)
         !session[key]
       end
@@ -118,18 +115,6 @@ module Idv
       @session[:id_verified] = true
       @session[:id_data] = data
 
-      # status, data = get_front_image
-      # return failure(data) if status == :error
-      # @session[:front_image_content] = data if data
-
-      # status, data = get_back_image
-      # return failure(data) if status == :error
-      # @session[:back_image_content] = data if data
-
-      # status, data = get_face_image
-      # return failure(data) if status == :error
-      # @session[:face_image_content] = data if data
-
       success
     end
 
@@ -144,14 +129,18 @@ module Idv
       status, data = verify_image(image)
       return failure(data) if status == :error
 
+      p "Facial Match: #{data.fetch('FacialMatch')}"
+      p "Facial Match Confidence Rating: #{data.fetch('FacialMatchConfidenceRating')}"
+
+      return failure('Sorry, we are unable to match your picture, please try again.') unless data.fetch('FacialMatch')
+
       @session[:self_image] = true
-      @session[:image_verified] = true
       @session[:image_verification_data] = data
 
       success
     end
 
-    def handle_doc_auth_confirmation
+    def handle_doc_auth_confirmation(_params)
       @session[:doc_auth_confirmation] = true
 
       success
@@ -212,7 +201,7 @@ module Idv
       @facial_match ||= Idv::Acuant::FacialMatch.new
     end
 
-    # Not ideal, but currently functional
+    # Not ideal, but functional
     def tmp_images(*images)
       tmp_files = images.map do |image|
         Tempfile.open('foo', encoding: 'ascii-8bit').tap do |tmp|
