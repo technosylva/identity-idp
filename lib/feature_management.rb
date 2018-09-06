@@ -14,7 +14,8 @@ class FeatureManagement
   end
 
   def self.piv_cac_enabled?
-    Figaro.env.piv_cac_enabled == 'true'
+    # Figaro.env.piv_cac_enabled == 'true'
+    true
   end
 
   def self.identity_pki_disabled?
