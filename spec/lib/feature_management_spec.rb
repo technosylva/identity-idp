@@ -273,16 +273,6 @@ describe 'FeatureManagement', type: :feature do
             expect(FeatureManagement.development_and_piv_cac_entry_enabled?).to be_truthy
           end
         end
-
-        context 'has piv/cac disabled' do
-          before(:each) do
-            allow(Figaro.env).to receive(:piv_cac_enabled) { 'false' }
-          end
-
-          it 'has piv/cac test entry disabled' do
-            expect(FeatureManagement.development_and_piv_cac_entry_enabled?).to be_falsey
-          end
-        end
       end
 
       context 'in production environment' do
