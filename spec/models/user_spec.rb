@@ -175,16 +175,6 @@ describe User do
         it 'does allows piv/cac' do
           expect(user.piv_cac_available?).to be_truthy
         end
-
-        context 'but piv/cac feature is not enabled' do
-          before(:each) do
-            allow(Figaro.env).to receive(:piv_cac_enabled).and_return('false')
-          end
-
-          it 'does not allow piv/cac' do
-            expect(user.piv_cac_available?).to be_falsey
-          end
-        end
       end
     end
 
@@ -193,16 +183,6 @@ describe User do
 
       it 'allows piv/cac' do
         expect(user.piv_cac_available?).to be_truthy
-      end
-
-      context 'but the piv/cac feature is disabled' do
-        before(:each) do
-          allow(Figaro.env).to receive(:piv_cac_enabled).and_return('false')
-        end
-
-        it 'does not allow piv/cac' do
-          expect(user.piv_cac_available?).to be_falsey
-        end
       end
     end
   end

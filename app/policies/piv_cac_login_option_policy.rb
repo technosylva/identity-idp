@@ -4,7 +4,7 @@ class PivCacLoginOptionPolicy
   end
 
   def configured?
-    FeatureManagement.piv_cac_enabled? && user.x509_dn_uuid.present?
+    user.x509_dn_uuid.present?
   end
 
   def enabled?

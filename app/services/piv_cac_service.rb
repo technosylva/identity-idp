@@ -29,7 +29,6 @@ module PivCacService
     end
 
     def piv_cac_available_for_agency?(agency, email = nil)
-      return unless FeatureManagement.piv_cac_enabled?
       available_for_agency?(agency) || available_for_email?(agency, email)
     end
 

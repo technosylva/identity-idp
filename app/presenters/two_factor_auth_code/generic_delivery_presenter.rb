@@ -43,7 +43,6 @@ module TwoFactorAuthCode
     attr_reader :personal_key_unavailable, :has_piv_cac_configured, :view, :reauthn
 
     def piv_cac_link
-      return unless FeatureManagement.piv_cac_enabled?
       return unless has_piv_cac_configured
       view.link_to(
         t('two_factor_authentication.piv_cac_fallback.link'),
@@ -52,7 +51,6 @@ module TwoFactorAuthCode
     end
 
     def piv_cac_option
-      return unless FeatureManagement.piv_cac_enabled?
       return unless has_piv_cac_configured
       t(
         'two_factor_authentication.piv_cac_fallback.text_html',

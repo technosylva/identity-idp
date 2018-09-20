@@ -214,28 +214,6 @@ describe 'FeatureManagement', type: :feature do
   end
 
   describe 'piv/cac feature' do
-    describe '#piv_cac_enabled?' do
-      context 'when enabled' do
-        before(:each) do
-          allow(Figaro.env).to receive(:piv_cac_enabled) { 'true' }
-        end
-
-        it 'has the feature disabled' do
-          expect(FeatureManagement.piv_cac_enabled?).to be_truthy
-        end
-      end
-
-      context 'when disabled' do
-        before(:each) do
-          allow(Figaro.env).to receive(:piv_cac_enabled) { 'false' }
-        end
-
-        it 'has the feature disabled' do
-          expect(FeatureManagement.piv_cac_enabled?).to be_falsey
-        end
-      end
-    end
-
     describe '#identity_pki_disabled?' do
       context 'when enabled' do
         before(:each) do
@@ -271,16 +249,6 @@ describe 'FeatureManagement', type: :feature do
 
           it 'has piv/cac test entry enabled' do
             expect(FeatureManagement.development_and_piv_cac_entry_enabled?).to be_truthy
-          end
-        end
-
-        context 'has piv/cac disabled' do
-          before(:each) do
-            allow(Figaro.env).to receive(:piv_cac_enabled) { 'false' }
-          end
-
-          it 'has piv/cac test entry disabled' do
-            expect(FeatureManagement.development_and_piv_cac_entry_enabled?).to be_falsey
           end
         end
       end
