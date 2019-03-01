@@ -92,7 +92,7 @@ describe SamlRequestValidator do
       end
     end
 
-    context 'invalid authentication context and valid service provider' do
+    context 'missing authentication context and valid service provider' do
       it 'returns FormResponse with success: false' do
         sp = ServiceProvider.from_issuer('http://localhost:3000')
         allow(FormResponse).to receive(:new)
