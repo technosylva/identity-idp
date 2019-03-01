@@ -8,7 +8,7 @@ class SamlRequestValidator
 
   def call(service_provider:, authn_context:, nameid_format:)
     self.service_provider = service_provider
-    self.authn_context = authn_context || Saml::Idp::Constants::LOA1_AUTHN_CONTEXT_CLASSREF
+    self.authn_context = valid_authn_context
     self.nameid_format = nameid_format
 
     FormResponse.new(success: valid?, errors: errors.messages, extra: extra_analytics_attributes)
@@ -31,9 +31,9 @@ class SamlRequestValidator
     errors.add(:service_provider, :unauthorized_service_provider)
   end
 
-  def authorized_authn_context
-    return if Saml::Idp::Constants::VALID_AUTHN_CONTEXTS.include?(authn_context)
-
+  def valid_authn_context
+    return authn_context if Saml::Idp::Constants::VALID_AUTHN_CONTEXTS.include?(authn_context)
+    return Saml::Idp::Constants::LOA1_AUTHN_CONTEXT_CLASSREF if authn_context.nil?
     errors.add(:authn_context, :unauthorized_authn_context)
   end
 
