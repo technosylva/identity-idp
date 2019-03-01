@@ -95,24 +95,20 @@ describe SamlRequestValidator do
     context 'invalid authentication context and valid service provider' do
       it 'returns FormResponse with success: false' do
         sp = ServiceProvider.from_issuer('http://localhost:3000')
-        authn_context = 'LOA11'
         allow(FormResponse).to receive(:new)
         extra = {
-          authn_context: authn_context,
+          authn_context: Saml::Idp::Constants::LOA1_AUTHN_CONTEXT_CLASSREF,
           service_provider: sp.issuer,
-        }
-        errors = {
-          authn_context: [t('errors.messages.unauthorized_authn_context')],
         }
 
         SamlRequestValidator.new.call(
           service_provider: sp,
-          authn_context: authn_context,
+          authn_context: nil,
           nameid_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
         )
 
         expect(FormResponse).to have_received(:new).
-          with(success: false, errors: errors, extra: extra)
+          with(success: true, errors: {}, extra: extra)
       end
     end
 

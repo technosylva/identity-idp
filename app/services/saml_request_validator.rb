@@ -2,14 +2,13 @@ class SamlRequestValidator
   include ActiveModel::Model
 
   validate :authorized_service_provider
-  validate :authorized_authn_context
   validate :authorized_email_nameid_format
 
   ISSUERS_WITH_EMAIL_NAMEID_FORMAT = Figaro.env.issuers_with_email_nameid_format.split(',').freeze
 
   def call(service_provider:, authn_context:, nameid_format:)
     self.service_provider = service_provider
-    self.authn_context = authn_context
+    self.authn_context = authn_context || Saml::Idp::Constants::LOA1_AUTHN_CONTEXT_CLASSREF
     self.nameid_format = nameid_format
 
     FormResponse.new(success: valid?, errors: errors.messages, extra: extra_analytics_attributes)
