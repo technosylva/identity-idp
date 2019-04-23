@@ -1,3 +1,5 @@
+require 'zhong/web' # TODO DO NOT MERGE
+
 Rails.application.routes.draw do
   # Non i18n routes. Alphabetically sorted.
   get '/api/health' => 'health/health#index'
@@ -256,6 +258,9 @@ Rails.application.routes.draw do
 
     root to: 'users/sessions#new'
   end
+
+  # TODO XXX DO NOT MERGE
+  mount Zhong::Web, at: "/zhong"
 
   # Make sure any new routes are added above this line!
   # The line below will route all requests that aren't

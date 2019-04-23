@@ -189,6 +189,7 @@ GEM
     crass (1.0.4)
     css_parser (1.7.0)
       addressable
+    dalli (2.7.10)
     database_cleaner (1.7.0)
     debug_inspector (0.0.3)
     derailed (0.1.0)
@@ -337,6 +338,7 @@ GEM
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
+    msgpack (1.2.9)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
     mustermann (1.0.3)
@@ -567,6 +569,10 @@ GEM
     stringex (2.8.5)
     strong_migrations (0.3.1)
       activerecord (>= 3.2.0)
+    suo (0.3.3)
+      dalli
+      msgpack
+      redis
     sysexits (1.2.0)
     systemu (2.6.5)
     temple (0.8.1)
@@ -636,6 +642,11 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.18)
+    zhong (0.2.4)
+      activesupport
+      redis
+      suo
+      tzinfo
     zonebie (0.6.1)
     zxcvbn-js (4.4.3)
       execjs
@@ -744,6 +755,7 @@ DEPENDENCIES
   webmock
   webpacker (~> 3.4)
   xmlenc (~> 0.6)
+  zhong (~> 0.2)
   zonebie
   zxcvbn-js
 

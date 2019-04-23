@@ -65,6 +65,7 @@ gem 'valid_email'
 gem 'webauthn'
 gem 'webpacker', '~> 3.4'
 gem 'xmlenc', '~> 0.6'
+gem 'zhong', '~> 0.2'
 gem 'zxcvbn-js'
 
 group :development do
