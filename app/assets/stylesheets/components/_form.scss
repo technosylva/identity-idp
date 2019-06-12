@@ -24,7 +24,7 @@ textarea {
 }
 
 .field {
-  background-color: #f2f9ff;
+  background-color: $blue-lightest;
   color: $gray;
   font-weight: $bold-font-weight;
 
@@ -50,6 +50,10 @@ textarea {
   margin-left: $radio-checkbox-space;
 }
 
+.info-icon {
+  margin-right: 4px;
+  float: right;
+}
 
 // error states
 .has-error input {
@@ -86,21 +90,41 @@ input::-webkit-inner-spin-button {
 
 
 // wtf-forms.css
-.checkbox,
-.radio {
+.checkbox-blue,
+.radio-blue {
   cursor: pointer;
   padding-left: 24px;
   position: relative;
 }
 
-.checkbox input,
-.radio input, {
+.checkbox-green,
+.radio-green-dark {
+  cursor: pointer;
+  padding-left: 24px;
+  position: relative;
+}
+
+.checkbox-blue input,
+.radio-blue input, {
   opacity: 0;
   position: absolute;
   z-index: -1;
 }
 
-.radio .visible {
+.checkbox-green input,
+.radio-green-dark input, {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.radio-blue .visible {
+  opacity: 1;
+  position: relative;
+  z-index: inherit;
+}
+
+.radio-green-dark .visible {
   opacity: 1;
   position: relative;
   z-index: inherit;
@@ -127,44 +151,86 @@ input::-webkit-inner-spin-button {
   width: 1rem;
 }
 
-.checkbox input:focus ~ .indicator,
-.radio input:focus ~ .indicator {
+.checkbox-blue input:focus ~ .indicator,
+.radio-blue input:focus ~ .indicator {
   box-shadow: 0 0 0 2px rgba($blue, .5);
 }
 
-.checkbox input:checked ~ .indicator,
-.radio input:checked ~ .indicator {
+.checkbox-green input:focus ~ .indicator,
+.radio-green-dark input:focus ~ .indicator {
+  box-shadow: 0 0 0 2px rgba($green-dark, .5);
+}
+
+.checkbox-blue input:checked ~ .indicator,
+.radio-blue input:checked ~ .indicator {
   background-color: $blue;
   color: $white;
 }
 
-.checkbox input:active ~ .indicator,
-.radio input:active ~ .indicator {
+.checkbox-green input:checked ~ .indicator,
+.radio-green-dark input:checked ~ .indicator {
+  background-color: $green-dark;
+  color: $white;
+}
+
+.checkbox-blue input:active ~ .indicator,
+.radio-blue input:active ~ .indicator {
   background-color: $blue-light;
   color: $white;
 }
 
-.checkbox .indicator {
+.checkbox-green input:active ~ .indicator,
+.radio-green-dark input:active ~ .indicator {
+  background-color: $green-light;
+  color: $white;
+}
+
+.checkbox-blue .indicator {
   background-color: $white;
   border: $border-width solid $blue;
   border-radius: .25rem;
 }
 
-.checkbox input:checked ~ .indicator {
+.checkbox-green .indicator {
+  background-color: $white;
+  border: $border-width solid $green-dark;
+  border-radius: .25rem;
+}
+
+.checkbox-blue input:checked ~ .indicator {
   background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTYuNCwxTDUuNywxLjdMMi45LDQuNUwyLjEsMy43TDEuNCwzTDAsNC40bDAuNywwLjdsMS41LDEuNWwwLjcsMC43bDAuNy0wLjdsMy41LTMuNWwwLjctMC43TDYuNCwxTDYuNCwxeiINCgkvPg0KPC9zdmc+DQo=);
 }
 
-.radio .indicator {
-  background-color: #f2f9ff;
+.checkbox-green input:checked ~ .indicator {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTYuNCwxTDUuNywxLjdMMi45LDQuNUwyLjEsMy43TDEuNCwzTDAsNC40bDAuNywwLjdsMS41LDEuNWwwLjcsMC43bDAuNy0wLjdsMy41LTMuNWwwLjctMC43TDYuNCwxTDYuNCwxeiINCgkvPg0KPC9zdmc+DQo=);
+}
+
+.radio-blue .indicator {
+  background-color: $blue-lightest;
   border: $border-width solid $blue;
   border-radius: 50%;
 }
 
-.radio input:checked ~ .indicator {
+.radio-green-dark .indicator {
+  background-color: $green-light;
+  border: $border-width solid $green-dark;
+  border-radius: 50%;
+}
+
+.radio-blue input:checked ~ .indicator {
   background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTQsMUMyLjMsMSwxLDIuMywxLDRzMS4zLDMsMywzczMtMS4zLDMtM1M1LjcsMSw0LDF6Ii8+DQo8L3N2Zz4NCg==);
 }
 
-.radio input:disabled ~ .indicator {
+.radio-green-dark input:checked ~ .indicator {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTQsMUMyLjMsMSwxLDIuMywxLDRzMS4zLDMsMywzczMtMS4zLDMtM1M1LjcsMSw0LDF6Ii8+DQo8L3N2Zz4NCg==);
+}
+
+.radio-blue input:disabled ~ .indicator {
+  background-color: $gray-light;
+  border-color: $gray;
+}
+
+.radio-green-dark input:disabled ~ .indicator {
   background-color: $gray-light;
   border-color: $gray;
 }

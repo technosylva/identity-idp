@@ -81,6 +81,20 @@
   }
 }
 
+.btn-border-green {
+  border-color: $green-border-color;
+  border-radius: $border-radius-lg;
+  border-style: solid;
+  border-width: $border-width;
+  box-sizing: border-box;
+  display: inline-block;
+  padding: $space-1 $space-2;
+
+  &.is-focused {
+    border-color: $green-field-focus-color;
+  }
+}
+
 .btn-disabled {
   background-color: $gray-light;
   border-color: $gray;

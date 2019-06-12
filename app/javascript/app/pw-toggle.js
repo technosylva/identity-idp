@@ -10,7 +10,7 @@ function togglePw() {
       const el = `
         <div class="top-n24 right-0 absolute">
           <label class="btn-border" for="pw-toggle-${i}">
-            <div class="checkbox">
+            <div class="checkbox-blue">
               <input id="pw-toggle-${i}" type="checkbox">
               <span class="indicator"></span>
               ${I18n.t('forms.passwords.show')}

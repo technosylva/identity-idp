@@ -107,17 +107,35 @@ en:
       auth_app: Authentication application
       auth_app_info: Set up an authentication application to get your security code
         without providing a phone number
+      auth_app_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco
       backup_code: Backup Codes
       backup_code_info: Receive a pre-generated list of security codes to use when
         signing in
-      piv_cac: Government employees
+      backup_code_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco
+      piv_cac: Government employees (Recommended)
       piv_cac_info: Use your PIV/CAC card to secure your account
+      piv_cac_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco
       sms: Text message / SMS
       sms_info: Get your security code via text message / SMS
+      sms_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco
       voice: Phone call
       voice_info: Get your security code via phone call
-      webauthn: Security key
+      voice_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco
+      webauthn: Security key (Recommended)
       webauthn_info: Use a security key to secure your account
+      webauthn_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco
     two_factor_recovery_choice: Add another method
     two_factor_recovery_choice_intro: Adding another authentication method makes sure
       you can sign in to your account even if you lose or don't have your main one.
