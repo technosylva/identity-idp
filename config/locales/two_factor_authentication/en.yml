@@ -116,7 +116,7 @@ en:
       backup_code_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco
-      piv_cac: Government employees (Recommended)
+      piv_cac: Government employees
       piv_cac_info: Use your PIV/CAC card to secure your account
       piv_cac_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -131,7 +131,7 @@ en:
       voice_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco
-      webauthn: Security key (Recommended)
+      webauthn: Security key
       webauthn_info: Use a security key to secure your account
       webauthn_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim

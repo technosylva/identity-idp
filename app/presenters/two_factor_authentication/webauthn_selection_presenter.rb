@@ -9,15 +9,19 @@ module TwoFactorAuthentication
     end
 
     def font_color
-      'green-dark'
+      'blue'
     end
 
     def bg_color
-      'bg-light-green'
+      'bg-lightest-blue'
     end
 
     def border_color
-      '-green'
+      ''
+    end
+
+    def recommended?
+      true
     end
   end
 end

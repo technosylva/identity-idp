@@ -3,8 +3,6 @@ import 'classlist.js';
 function clearHighlight(name) {
   var radioGroup = document.querySelectorAll(`input[name='${name}']`);
 
-  console.log(radioGroup);
-
   Array.prototype.forEach.call(radioGroup, (radio) => {
     radio.parentNode.parentNode.classList.remove('bg-lightest-blue', 'bg-light-green');
   });
@@ -13,10 +11,6 @@ function clearHighlight(name) {
 function highlightRadioBtn() {
   var radiosDefault = document.querySelectorAll('.btn-border input[type=radio]');
   var radiosGreen = document.querySelectorAll('.btn-border-green input[type=radio]');
-
-  var allRadios = document.querySelectorAll('input[type=radio]');
-
-  console.log(allRadios);
 
   if (radiosDefault) {
     Array.prototype.forEach.call(radiosDefault, (radio) => {
@@ -45,7 +39,6 @@ function highlightRadioBtn() {
   }
 
   if (radiosGreen) {
-    console.log("HELLO AM I EVEN GOING INTO THIS");
     Array.prototype.forEach.call(radiosGreen, (radio) => {
       const label = radio.parentNode.parentNode;
       const name = radio.getAttribute('name');
@@ -55,26 +48,23 @@ function highlightRadioBtn() {
       radio.addEventListener('change', function() {
         clearHighlight(name);
         if (radio.checked) label.classList.add('bg-light-green');
-
-        console.log("IN CHANGE");
       });
 
       radio.addEventListener('focus', function() {
         const autofocusedInput = label.querySelector('input.auto-focus');
         label.classList.add('is-focused');
         if (autofocusedInput) { autofocusedInput.focus(); }
-
-        console.log("IN FOCUS");
-
       });
 
       radio.addEventListener('blur', function() {
         label.classList.remove('is-focused');
-
       });
     });
   }
 }
 
-
 document.addEventListener('DOMContentLoaded', highlightRadioBtn);
+
+export {
+  highlightRadioBtn,
+};

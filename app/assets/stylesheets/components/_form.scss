@@ -50,10 +50,26 @@ textarea {
   margin-left: $radio-checkbox-space;
 }
 
+// added
+
 .info-icon {
   margin-right: 4px;
   float: right;
 }
+
+.rec-tag {
+  height: 24px;
+  width: 120px;
+  background-color: $teal-light;
+  border: 1px solid $teal-dark;
+  border-radius: 3px;
+  color: $teal-dark;
+  font-weight: bold;
+  float: right;
+  margin-right: 10px;
+  text-align: center;
+}
+
 
 // error states
 .has-error input {

@@ -15,5 +15,9 @@ module TwoFactorAuthentication
     def border_color
       ''
     end
+
+    def recommended?
+      false
+    end
   end
 end
