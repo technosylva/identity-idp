@@ -107,35 +107,33 @@ en:
       auth_app: Authentication application
       auth_app_info: Set up an authentication application to get your security code
         without providing a phone number
-      auth_app_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco
+      auth_app_more_info: You can download an authentication application onto your device
+        which will generate a new security code every time you login to your
+        account
       backup_code: Backup Codes
       backup_code_info: Receive a pre-generated list of security codes to use when
         signing in
-      backup_code_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco
+      backup_code_more_info: Securing your account with backup codes is not recommended,
+        as they are the least secure option. You will have to store your codes in a safe location
+        and can regenerate them after logging in ten times.
       piv_cac: Government employees
       piv_cac_info: Use your PIV/CAC card to secure your account
-      piv_cac_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco
+      piv_cac_more_info: Recommended for government employees - connect a PIV/CAC card reader
+        to your device and sign in by inserting your PIV/CAC card.
       sms: Text message / SMS
       sms_info: Get your security code via text message / SMS
-      sms_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco
+      sms_more_info: We will send you a text message / SMS with a new security code each
+        time you login to your account.
       voice: Phone call
       voice_info: Get your security code via phone call
-      voice_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco
+      voice_more_info: We will call the number you list and read out a new security code
+        each time you login to your account.
       webauthn: Security key
       webauthn_info: Use a security key to secure your account
-      webauthn_more_info: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco
+      webauthn_more_info: Recommended as security keys are the most secure method to protect
+        your account. Security keys can be bought online or at a local hardware store, and
+        come in small USB devices, fingerprint authenticators, or built-in platforms such as
+        Windows Hello.
     two_factor_recovery_choice: Add another method
     two_factor_recovery_choice_intro: Adding another authentication method makes sure
       you can sign in to your account even if you lose or don't have your main one.

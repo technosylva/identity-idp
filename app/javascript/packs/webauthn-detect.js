@@ -36,7 +36,10 @@ function detectWebauthn() {
       // change tooltip value
       const optionTooltip = detectedOption.getElementsByClassName('hint--right hint--no-animate')[0];
       console.log(optionTooltip);
-      optionTooltip.setAttribute('aria-label', 'haha shoot');
+      optionTooltip.setAttribute('aria-label',
+        'Recommended as your device already has $PLATFORM available, '
+        + 'and it is one of the most secure ways to protect your account. '
+        + 'You will be prompted to use $PLATFORM each time you login.');
 
       // bye bye webauthn coloring bc detected option is now at the top!
       webauthnOption.classList.remove('bg-lightest-blue');
