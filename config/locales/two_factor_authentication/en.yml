@@ -105,35 +105,38 @@ en:
       a second layer of security.
     two_factor_choice_options:
       auth_app: Authentication application
-      auth_app_info: Set up an authentication application to get your security code
-        without providing a phone number
-      auth_app_more_info: You can download an authentication application onto your device
-        which will generate a new security code every time you login to your
-        account
+      auth_app_info: Get security codes from an authentication application.
+        <a href='https://login.gov/help/signing-in/what-is-an-authentication-app/'>Learn more.</a>
+      auth_app_more_info: You do not need phone or internet service to use an authentication
+        application. We will ask you to enter a security code from your authentication app
+        each time you sign in. You can download an authentication app onto your device
+        (phone, computer, tablet, etc.).
       backup_code: Backup Codes
-      backup_code_info: Receive a pre-generated list of security codes to use when
-        signing in
-      backup_code_more_info: Securing your account with backup codes is not recommended,
-        as they are the least secure option. You will have to store your codes in a safe location
-        and can regenerate them after logging in ten times.
-      piv_cac: Government employees
-      piv_cac_info: Use your PIV/CAC card to secure your account
-      piv_cac_more_info: Recommended for government employees - connect a PIV/CAC card reader
-        to your device and sign in by inserting your PIV/CAC card.
+      backup_code_info: Download and save a list of codes to use
+      backup_code_more_info: This option is not recommended because it is the least secure.
+        We will give you a list of codes that you must keep in a safe location. Each time
+        you sign in, we will ask you to enter one of the codes. After you use the 10th code,
+        we will give you a new list of codes to save and use. 
+      piv_cac: Government employee ID
+      piv_cac_info: Connect your PIV/CAC card using a card reader
+      piv_cac_more_info: Recommended because it is one of the most secure options.
+        The email address you entered tells us that you can use your government or
+        military employee PIV/CAC card.
       sms: Text message / SMS
-      sms_info: Get your security code via text message / SMS
-      sms_more_info: We will send you a text message / SMS with a new security code each
-        time you login to your account.
+      sms_info: Get security codes by text message (SMS) or phone call
+      sms_more_info: Each time you sign in, we will send a new security code to your
+        phone and ask you to enter it here.
       voice: Phone call
-      voice_info: Get your security code via phone call
-      voice_more_info: We will call the number you list and read out a new security code
-        each time you login to your account.
+      voice_info: Get security codes by text message (SMS) or phone call
+      voice_more_info: Each time you sign in, we will send a new security code to your
+        phone and ask you to enter it here.
       webauthn: Security key
-      webauthn_info: Use a security key to secure your account
-      webauthn_more_info: Recommended as security keys are the most secure method to protect
-        your account. Security keys can be bought online or at a local hardware store, and
-        come in small USB devices, fingerprint authenticators, or built-in platforms such as
-        Windows Hello.
+      webauthn_info: Connect a security key to your device.
+        <a href='https://login.gov/help/security-keys/what-is-a-security-key/'>Learn more.</a>
+      webauthn_more_info: Recommended because it is one of the most secure options.
+        A security key is usually a physical device (like a USB), it may be built into your phone,
+        or it can be a supporting software (like a web browser extension). You can buy a security
+        key online or from a trusted retailer.
     two_factor_recovery_choice: Add another method
     two_factor_recovery_choice_intro: Adding another authentication method makes sure
       you can sign in to your account even if you lose or don't have your main one.

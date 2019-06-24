@@ -31,15 +31,14 @@ function detectWebauthn() {
 
       // change info value
       const optionInfo = detectedOption.getElementsByClassName('regular gray-dark fs-10p mt0 mb-tiny')[0];
-      optionInfo.innerHTML = 'Use your ' + currentPlatform + ' to secure your account';
+      optionInfo.innerHTML = 'Use your ' + currentPlatform;
 
       // change tooltip value
       const optionTooltip = detectedOption.getElementsByClassName('hint--right hint--no-animate')[0];
       console.log(optionTooltip);
       optionTooltip.setAttribute('aria-label',
-        'Recommended as your device already has $PLATFORM available, '
-        + 'and it is one of the most secure ways to protect your account. '
-        + 'You will be prompted to use $PLATFORM each time you login.');
+        'Recommended because it is one of the most secure options and '
+        + 'we noticed that it is available on your device.');
 
       // bye bye webauthn coloring bc detected option is now at the top!
       webauthnOption.classList.remove('bg-lightest-blue');
