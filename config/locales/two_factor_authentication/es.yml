@@ -117,9 +117,14 @@ es:
     two_factor_choice_intro: login.gov se asegura de que pueda acceder a su cuenta
       agregando una segunda capa de seguridad.
     two_factor_choice_options:
+      learn_more: Learn more.
       auth_app: Aplicación de autenticación
       auth_app_info_html: Configure una aplicación de autenticación para obtener su
         código de seguridad sin proporcionar un número de teléfono
+      auth_app_more_info: You do not need phone or internet service to use an authentication
+        application. We will ask you to enter a security code from your authentication app
+        each time you sign in. You can download an authentication app onto your device
+        (phone, computer, tablet, etc.).
       backup_code: Códigos de seguridad personal
       backup_code_info_html: Reciba una lista generada previamente de códigos de seguridad
         para usar al iniciar sesión
@@ -127,15 +132,30 @@ es:
       backup_code_only_info_html: Configure su cuenta sin un método de autenticación
         de copia de seguridad. <strong>Esto no es recomendable.</strong> Si alguna
         vez pierde sus códigos de respaldo, no podrá iniciar sesión en su cuenta.
+      backup_code_more_info: Not recommended because it is the least secure.
+        We will give you a list of codes that you must keep in a safe location. Each time
+        you sign in, we will ask you to enter one of the codes. After you use the 10th code,
+        we will give you a new list of codes to save and use.
       piv_cac: Empleados del Gobierno
       piv_cac_info_html: Use su tarjeta PIV / CAC para asegurar su cuenta
+      piv_cac_more_info: Recommended because it is one of the most secure options.
+        The email address you entered tells us that you can use your government or
+        military employee PIV/CAC card.
       sms: Mensaje de texto / SMS
       sms_info_html: Obtenga su código de seguridad a través de mensajes de texto
         / SMS
+      sms_more_info: Each time you sign in, we will send a new security code to your
+        phone and ask you to enter it here.
       voice: Llamada telefónica
       voice_info_html: Obtenga su código de seguridad a través de una llamada telefónica
+      voice_more_info: Each time you sign in, we will send a new security code to your
+        phone and ask you to enter it here.
       webauthn: Clave de seguridad
       webauthn_info_html: Use una clave de seguridad para proteger su cuenta
+      webauthn_more_info: Recommended because it is one of the most secure options.
+        A security key is usually a physical device (like a USB), it may be built into your phone,
+        or it can be a supporting software (like a web browser extension). You can buy a security
+        key online or from a trusted retailer.
     two_factor_recovery_choice: Añadir otro método
     two_factor_recovery_choice_intro: Agregar otro método de autenticación hace seguro
       que puede iniciar sesión en su cuenta incluso si pierde o no tiene su principal

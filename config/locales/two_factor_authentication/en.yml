@@ -124,7 +124,7 @@ en:
       backup_code_only_info_html: Set up your account without a backup authentication
         method. This is <strong>not recommended</strong>. If you ever lose your backup
         codes you will not be able to sign into your account.
-      backup_code_more_info: This option is not recommended because it is the least secure.
+      backup_code_more_info: Not recommended because it is the least secure.
         We will give you a list of codes that you must keep in a safe location. Each time
         you sign in, we will ask you to enter one of the codes. After you use the 10th code,
         we will give you a new list of codes to save and use.
@@ -134,11 +134,11 @@ en:
         The email address you entered tells us that you can use your government or
         military employee PIV/CAC card.
       sms: Text message / SMS
-      sms_info_html: Get security codes by text message (SMS) or phone call
+      sms_info_html: Get security codes by text message (SMS)
       sms_more_info: Each time you sign in, we will send a new security code to your
         phone and ask you to enter it here.
       voice: Phone call
-      voice_info_html: Get security codes by text message (SMS) or phone call
+      voice_info_html: Get security codes by phone call
       voice_more_info: Each time you sign in, we will send a new security code to your
         phone and ask you to enter it here.
       webauthn: Security key

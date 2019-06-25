@@ -118,6 +118,10 @@ fr:
       auth_app: Application d'authentification
       auth_app_info_html: Configurez une application d'authentification pour obtenir
         votre code de sécurité sans fournir de numéro de téléphone
+      auth_app_more_info: You do not need phone or internet service to use an authentication
+        application. We will ask you to enter a security code from your authentication app
+        each time you sign in. You can download an authentication app onto your device
+        (phone, computer, tablet, etc.).
       backup_code: Codes de sécurité personnels
       backup_code_info_html: Recevoir une liste pré-générée de codes de sécurité à
         utiliser lors de la connexion
@@ -125,8 +129,15 @@ fr:
       backup_code_only_info_html: Configurez votre compte sans méthode d'authentification
         de sauvegarde. <strong>Ceci n'est pas recommandé.</strong> Si vous perdez
         vos codes de sauvegarde, vous ne pourrez pas vous connecter à votre compte.
+      backup_code_more_info: Not recommended because it is the least secure.
+        We will give you a list of codes that you must keep in a safe location. Each time
+        you sign in, we will ask you to enter one of the codes. After you use the 10th code,
+        we will give you a new list of codes to save and use.
       piv_cac: Employés du gouvernement
       piv_cac_info_html: Utilisez votre carte PIV / CAC pour sécuriser votre compte
+      piv_cac_more_info: Recommended because it is one of the most secure options.
+        The email address you entered tells us that you can use your government or
+        military employee PIV/CAC card.
       sms: SMS
       sms_info_html: Obtenez votre code de sécurité par SMS
       voice: Appel téléphonique
