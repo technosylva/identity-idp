@@ -23,7 +23,10 @@
           <% end %>
           <div class="regular gray-dark fs-10p mt0 mb-tiny">
             <%= option.info%>
-            <%= option.learn_more? ? link_to( t('two_factor_authentication.two_factor_choice_options.learn_more'), option.learn_more_path ) : ''%>
+            <%= option.learn_more? ?
+              link_to( t('two_factor_authentication.two_factor_choice_options.learn_more'),
+                option.learn_more_path, target: '_blank' ) :
+              ''%>
           </div>
         </div>
       </label>

@@ -27,7 +27,7 @@ function detectWebauthn() {
 
       // change label value
       const optionLabel = detectedOption.getElementsByClassName('blue bold fs-20p')[0];
-      optionLabel.innerHTML = 'Use your ' + currentPlatform;
+      optionLabel.innerHTML = currentPlatform;
 
       // change info value
       const optionInfo = detectedOption.getElementsByClassName('regular gray-dark fs-10p mt0 mb-tiny')[0];
