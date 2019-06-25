@@ -29,7 +29,7 @@ feature 'Changing authentication factor' do
 
       mailer = instance_double(ActionMailer::MessageDelivery, deliver_later: true)
       user.email_addresses.each do |email_address|
-        allow(UserMailer).to receive(:phone_changed).with(email_address).and_return(mailer)
+        allow(UserMailer).to receive(:phone_added).with(email_address).and_return(mailer)
       end
 
       @previous_phone_confirmed_at =
@@ -59,7 +59,7 @@ feature 'Changing authentication factor' do
 
       expect(current_path).to eq account_path
       user.email_addresses.each do |email_address|
-        expect(UserMailer).to have_received(:phone_changed).with(email_address)
+        expect(UserMailer).to have_received(:phone_added).with(email_address)
       end
       expect(mailer).to have_received(:deliver_later)
       expect(page).to have_content new_phone
@@ -79,8 +79,7 @@ feature 'Changing authentication factor' do
       visit manage_phone_path
       complete_2fa_confirmation
 
-      allow(VoiceOtpSenderJob).to receive(:perform_later)
-      allow(SmsOtpSenderJob).to receive(:perform_now)
+      Twilio::FakeCall.calls = []
 
       select 'Bahamas', from: 'user_phone_form_international_code'
       fill_in 'Phone', with: unsupported_phone
@@ -91,7 +90,7 @@ feature 'Changing authentication factor' do
         'two_factor_authentication.otp_delivery_preference.phone_unsupported',
         location: 'Bahamas',
       )
-      expect(VoiceOtpSenderJob).to_not have_received(:perform_later)
+      expect(Twilio::FakeCall.calls).to eq([])
       expect(page).to_not have_content(t('links.two_factor_authentication.resend_code.phone'))
     end
 
@@ -148,15 +147,6 @@ feature 'Changing authentication factor' do
       end
     end
 
-    scenario 'editing email' do
-      visit manage_email_path(id: user.email_addresses.take.id)
-
-      expect(page).to have_content t('help_text.change_factor', factor: 'email')
-      complete_2fa_confirmation
-
-      expect(current_path).to eq manage_email_path(id: user.email_addresses.take.id)
-    end
-
     scenario 'deleting account' do
       visit account_delete_path
 
@@ -167,42 +157,10 @@ feature 'Changing authentication factor' do
     end
   end
 
-  context 'user has authenticator app enabled' do
-    it 'allows them to change their email, password, or phone' do
-      stub_twilio_service
-      sign_in_with_totp_enabled_user
-
-      Timecop.travel(Figaro.env.reauthn_window.to_i + 1) do
-        visit manage_email_path(id: User.last.email_addresses.take.id)
-        submit_current_password_and_totp
-
-        expect(current_path).to eq manage_email_path(id: User.last.email_addresses.take.id)
-      end
-
-      Timecop.travel(Figaro.env.reauthn_window.to_i * 3) do
-        visit manage_password_path
-        submit_current_password_and_totp
-
-        expect(current_path).to eq manage_password_path
-      end
-
-      Timecop.travel(Figaro.env.reauthn_window.to_i * 4) do
-        visit manage_phone_path
-        submit_current_password_and_totp
-
-        expect(current_path).to eq manage_phone_path
-
-        update_phone_number
-        expect(page).to have_link t('links.cancel'), href: account_path
-      end
-    end
-  end
-
   context 'with SMS and number that Verify does not think is valid' do
     it 'rescues the VerifyError' do
-      allow(SmsOtpSenderJob).to receive(:perform_later)
-      PhoneVerification.adapter = FakeAdapter
-      allow(FakeAdapter).to receive(:post).and_return(FakeAdapter::ErrorResponse.new)
+      allow(Twilio::FakeVerifyAdapter).to receive(:post).
+        and_return(Twilio::FakeVerifyAdapter::ErrorResponse.new)
 
       user = create(:user, :signed_up, with: { phone: '+17035551212' })
       visit new_user_session_path
@@ -219,6 +177,7 @@ feature 'Changing authentication factor' do
 
   def complete_2fa_confirmation
     complete_2fa_confirmation_without_entering_otp
+    fill_in_code_with_last_phone_otp
     click_submit_default
   end
 
@@ -254,6 +213,7 @@ feature 'Changing authentication factor' do
   end
 
   def submit_correct_otp
+    fill_in_code_with_last_phone_otp
     click_submit_default
   end
 

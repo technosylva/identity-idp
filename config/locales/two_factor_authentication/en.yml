@@ -20,6 +20,13 @@ en:
     backup_code_prompt: You can use this security code once. After you enter it, you'll
       need to use a new key.
     choose_another_option: "‹ Choose another option"
+    devices:
+      auth_app: Authentication app
+      backup_code: Backup codes
+      phone: Phone
+      piv_cac: PIV/CAC
+      webauthn: Security key
+    first_factor_enabled: "%{device} was successfully setup as an authentication method."
     header_text: Enter your security code
     invalid_backup_code: That backup code is invalid.
     invalid_otp: That security code is invalid. You can try entering it again or request
@@ -29,22 +36,22 @@ en:
     login_intro: You set these up when you created your account
     login_options:
       auth_app: Authentication app
-      auth_app_info: Use your authentication application to get security code.
+      auth_app_info_html: Use your authentication application to get security code.
       personal_key: Personal Key
-      personal_key_info: Use the 16 character personal key you received at account
+      personal_key_info_html: Use the 16 character personal key you received at account
         creation.
       piv_cac: Government employee ID
-      piv_cac_info: Use your PIV/CAC card instead of a security code.
+      piv_cac_info_html: Use your PIV/CAC card instead of a security code.
       sms: Text message
       sms_info_html: Get security code via text message to <strong>%{phone}</strong>.
-      sms_setup_info: Get security code via text message.
+      sms_setup_info_html: Get security code via text message.
       voice: Automated phone call
       voice_info_html: Get security code via phone call to <strong>%{phone}</strong>
         (North America phone numbers only).
-      voice_setup_info: Get security code via phone call (North America phone numbers
-        only).
+      voice_setup_info_html: Get security code via phone call (North America phone
+        numbers only).
       webauthn: Security key
-      webauthn_info: Use your security key to access your account.
+      webauthn_info_html: Use your security key to access your account.
     login_options_link_text: Choose another security option
     login_options_title: Select your security option
     max_backup_code_login_attempts_reached: For your security, your account is temporarily
@@ -106,32 +113,36 @@ en:
     two_factor_choice_options:
       learn_more: Learn more.
       auth_app: Authentication application
-      auth_app_info: Get security codes from an authentication application.
+      auth_app_info_html: Get security codes from an authentication application.
       auth_app_more_info: You do not need phone or internet service to use an authentication
         application. We will ask you to enter a security code from your authentication app
         each time you sign in. You can download an authentication app onto your device
         (phone, computer, tablet, etc.).
       backup_code: Backup Codes
-      backup_code_info: Download and save a list of codes to use
+      backup_code_info_html: Download and save a list of codes to use
+      backup_code_only: I don't have any of the above
+      backup_code_only_info_html: Set up your account without a backup authentication
+        method. This is <strong>not recommended</strong>. If you ever lose your backup
+        codes you will not be able to sign into your account.
       backup_code_more_info: This option is not recommended because it is the least secure.
         We will give you a list of codes that you must keep in a safe location. Each time
         you sign in, we will ask you to enter one of the codes. After you use the 10th code,
         we will give you a new list of codes to save and use.
       piv_cac: Government employee ID
-      piv_cac_info: Connect your PIV/CAC card using a card reader
+      piv_cac_info_html: Connect your PIV/CAC card using a card reader
       piv_cac_more_info: Recommended because it is one of the most secure options.
         The email address you entered tells us that you can use your government or
         military employee PIV/CAC card.
       sms: Text message / SMS
-      sms_info: Get security codes by text message (SMS) or phone call
+      sms_info_html: Get security codes by text message (SMS) or phone call
       sms_more_info: Each time you sign in, we will send a new security code to your
         phone and ask you to enter it here.
       voice: Phone call
-      voice_info: Get security codes by text message (SMS) or phone call
+      voice_info_html: Get security codes by text message (SMS) or phone call
       voice_more_info: Each time you sign in, we will send a new security code to your
         phone and ask you to enter it here.
       webauthn: Security key
-      webauthn_info: Connect a security key to your device.
+      webauthn_info_html: Connect a security key to your device.
       webauthn_more_info: Recommended because it is one of the most secure options.
         A security key is usually a physical device (like a USB), it may be built into your phone,
         or it can be a supporting software (like a web browser extension). You can buy a security

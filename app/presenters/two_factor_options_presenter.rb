@@ -3,9 +3,11 @@ class TwoFactorOptionsPresenter
 
   attr_reader :current_user, :service_provider
 
-  def initialize(current_user, sp)
+  # :reek:BooleanParameter
+  def initialize(current_user, sp, signingup = false)
     @current_user = current_user
     @service_provider = sp
+    @signing_up = signingup
   end
 
   def title
@@ -32,7 +34,15 @@ class TwoFactorOptionsPresenter
     MfaPolicy.new(current_user).no_factors_enabled?
   end
 
+  def first_mfa_successfully_enabled_message
+    t('two_factor_authentication.first_factor_enabled', device: first_mfa_enabled)
+  end
+
   private
+
+  def first_mfa_enabled
+    t("two_factor_authentication.devices.#{FirstMfaEnabledForUser.call(current_user)}")
+  end
 
   def recovery
     no_factors_enabled? ? '' : 'recovery_'
@@ -73,8 +83,11 @@ class TwoFactorOptionsPresenter
   end
 
   def backup_code_option
-    if TwoFactorAuthentication::BackupCodePolicy.new(current_user).enrollable?
-      [TwoFactorAuthentication::BackupCodeSelectionPresenter.new]
+    if TwoFactorAuthentication::BackupCodePolicy.new(current_user).enrollable? || @signing_up
+      [TwoFactorAuthentication::BackupCodeSelectionPresenter.new(
+        @signing_up &&
+        TwoFactorAuthentication::BackupCodePolicy.new(current_user).enabled?,
+      )]
     else
       []
     end

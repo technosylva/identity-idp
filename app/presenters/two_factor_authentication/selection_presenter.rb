@@ -19,7 +19,7 @@ module TwoFactorAuthentication
     end
 
     def info
-      t("two_factor_authentication.#{option_mode}.#{method}_info")
+      t("two_factor_authentication.#{option_mode}.#{method}_info_html")
     end
 
     def more_info

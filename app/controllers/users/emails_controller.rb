@@ -4,6 +4,7 @@ module Users
     before_action :confirm_two_factor_authenticated
     before_action :authorize_user_to_edit_email, except: %i[add show verify resend]
     before_action :check_max_emails_per_account, only: %i[show add]
+    before_action :retain_confirmed_emails, only: %i[delete]
 
     def show
       @register_user_email_form = AddUserEmailForm.new
@@ -26,25 +27,6 @@ module Users
       SendAddEmailConfirmation.new(current_user).call(email_address)
       flash[:success] = t('notices.resend_confirmation_email.success')
       redirect_to add_email_verify_email_url
-    end
-
-    def edit
-      @update_user_email_form = UpdateUserEmailForm.new(current_user, email_address)
-    end
-
-    def update
-      @update_user_email_form = UpdateUserEmailForm.new(current_user, email_address)
-
-      result = @update_user_email_form.submit(user_params)
-
-      analytics.track_event(Analytics::EMAIL_CHANGE_REQUEST, result.to_h)
-
-      if result.success?
-        process_updates
-        bypass_sign_in current_user
-      else
-        render :edit
-      end
     end
 
     def confirm_delete
@@ -87,21 +69,10 @@ module Users
       EmailAddress.find(params[:id])
     end
 
-    def user_params
-      params.require(:update_user_email_form).permit(:email)
-    end
-
     def handle_successful_delete
+      send_delete_email_notification
       flash[:success] = t('email_addresses.delete.success')
       create_user_event(:email_deleted)
-    end
-
-    def process_updates
-      if @update_user_email_form.email_changed?
-        flash[:notice] = t('devise.registrations.email_update_needs_confirmation')
-      end
-
-      redirect_to account_url
     end
 
     def process_successful_creation
@@ -123,6 +94,16 @@ module Users
     def check_max_emails_per_account
       return if EmailPolicy.new(current_user).can_add_email?
       redirect_to account_url
+    end
+
+    def retain_confirmed_emails
+      @current_confirmed_emails = current_user.confirmed_email_addresses.map(&:email)
+    end
+
+    def send_delete_email_notification
+      @current_confirmed_emails.each do |confirmed_email|
+        UserMailer.email_deleted(confirmed_email).deliver_later
+      end
     end
   end
 end

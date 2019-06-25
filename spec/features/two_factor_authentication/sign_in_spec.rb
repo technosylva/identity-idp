@@ -109,7 +109,6 @@ feature 'Two Factor Authentication' do
     context 'with SMS option, international number, and locale header' do
       it 'passes locale to SmsOtpSenderJob' do
         page.driver.header 'Accept-Language', 'ar'
-        PhoneVerification.adapter = FakeAdapter
         allow(SmsOtpSenderJob).to receive(:perform_now)
 
         user = sign_in_before_2fa
@@ -132,7 +131,6 @@ feature 'Two Factor Authentication' do
     context 'with voice option and US number' do
       it 'sends the code via VoiceOtpSenderJob and redirects to prompt for the code' do
         sign_in_before_2fa
-        stub_twilio_service
         select_2fa_option('voice')
         fill_in 'user_phone_form_phone', with: '7035551212'
         click_send_security_code
@@ -171,7 +169,6 @@ feature 'Two Factor Authentication' do
   end
 
   def submit_2fa_setup_form_with_valid_phone
-    stub_twilio_service
     fill_in 'user_phone_form_phone', with: '703-555-1212'
     click_send_security_code
   end
@@ -190,7 +187,8 @@ feature 'Two Factor Authentication' do
       expect(current_path).to eq login_two_factor_path(otp_delivery_preference: 'sms')
 
       check 'remember_device'
-      submit_prefilled_otp_code
+      fill_in_code_with_last_phone_otp
+      click_submit_default
 
       expect(current_path).to eq account_path
     end
@@ -199,18 +197,14 @@ feature 'Two Factor Authentication' do
       visit account_path
     end
 
-    def submit_prefilled_otp_code
-      click_button t('forms.buttons.submit.default')
-    end
-
     scenario 'user can resend one-time password (OTP)' do
       user = create(:user, :signed_up)
       sign_in_before_2fa(user)
-      old_code = find('input[@name="code"]').value
+      old_code = last_sms_otp
 
       click_link t('links.two_factor_authentication.get_another_code')
 
-      new_code = find('input[@name="code"]').value
+      new_code = last_sms_otp
 
       expect(old_code).not_to eq(new_code)
     end
@@ -234,11 +228,10 @@ feature 'Two Factor Authentication' do
       user = create(:user, :signed_up, otp_delivery_preference: :sms)
       sign_in_before_2fa(user)
 
-      allow(VoiceOtpSenderJob).to receive(:perform_later)
-
       choose_another_security_option('voice')
 
-      expect(VoiceOtpSenderJob).to have_received(:perform_later)
+      expect(Twilio::FakeMessage.messages.length).to eq(1)
+      expect(Twilio::FakeCall.calls.length).to eq(1)
     end
 
     scenario 'the user cannot change delivery method if phone is unsupported' do
@@ -257,7 +250,6 @@ feature 'Two Factor Authentication' do
         user = create(:user, :signed_up, :with_backup_code)
         sign_in_user(user)
 
-        print page.current_url
         3.times do
           fill_in('code', with: '000000')
           click_button t('forms.buttons.submit.default')
@@ -348,6 +340,7 @@ feature 'Two Factor Authentication' do
         (max_attempts - 1).times do
           click_link t('links.two_factor_authentication.get_another_code')
         end
+        fill_in_code_with_last_phone_otp
         click_submit_default
 
         expect(current_path).to eq account_path
@@ -369,6 +362,7 @@ feature 'Two Factor Authentication' do
 
         expect(current_path).to eq login_two_factor_path(otp_delivery_preference: 'sms')
 
+        fill_in_code_with_last_phone_otp
         click_submit_default
 
         expect(current_path).to eq account_path
@@ -555,7 +549,6 @@ feature 'Two Factor Authentication' do
     context 'with SMS, international number, and locale header' do
       it 'passes locale to SmsOtpSenderJob' do
         page.driver.header 'Accept-Language', 'ar'
-        PhoneVerification.adapter = FakeAdapter
         allow(SmsOtpSenderJob).to receive(:perform_later)
 
         user = create(:user, :signed_up, with: { phone: '+212 661-289324' })
@@ -574,11 +567,8 @@ feature 'Two Factor Authentication' do
 
     context 'with SMS and international number that Verify does not think is valid' do
       it 'rescues the VerifyError' do
-        allow(SmsOtpSenderJob).to receive(:perform_later) do |*args|
-          SmsOtpSenderJob.perform_now(*args)
-        end
-        PhoneVerification.adapter = FakeAdapter
-        allow(FakeAdapter).to receive(:post).and_return(FakeAdapter::ErrorResponse.new)
+        allow(Twilio::FakeVerifyAdapter).to receive(:post).
+          and_return(Twilio::FakeVerifyAdapter::ErrorResponse.new)
 
         user = create(:user, :signed_up, with: { phone: '+212 661-289324' })
         sign_in_user(user)
@@ -592,12 +582,8 @@ feature 'Two Factor Authentication' do
     context 'user with Voice preference sends SMS, causing a Twilio error' do
       it 'does not change their OTP delivery preference' do
         allow(Figaro.env).to receive(:programmable_sms_countries).and_return('CA')
-        allow(VoiceOtpSenderJob).to receive(:perform_later)
-        allow(SmsOtpSenderJob).to receive(:perform_later) do |*args|
-          SmsOtpSenderJob.perform_now(*args)
-        end
-        PhoneVerification.adapter = FakeAdapter
-        allow(FakeAdapter).to receive(:post).and_return(FakeAdapter::ErrorResponse.new)
+        allow(Twilio::FakeVerifyAdapter).to receive(:post).
+          and_return(Twilio::FakeVerifyAdapter::ErrorResponse.new)
 
         user = create(:user, :signed_up,
                       otp_delivery_preference: 'voice',
@@ -668,21 +654,6 @@ feature 'Two Factor Authentication' do
         expect(page).to have_content(t('two_factor_authentication.invalid_otp'))
         expect(current_path).to eq login_two_factor_authenticator_path
       end
-    end
-  end
-
-  describe 'signing in when user does not already have personal key' do
-    # For example, when migrating users from another DB
-    it 'redirects to set up a backup MFA' do
-      user = create(:user, :signed_up)
-      UpdateUser.new(user: user, attributes: { encrypted_recovery_code_digest: nil }).call
-
-      sign_in_user(user)
-      click_button t('forms.buttons.submit.default')
-      fill_in 'code', with: user.reload.direct_otp
-      click_button t('forms.buttons.submit.default')
-
-      expect(current_path).to eq two_factor_options_path
     end
   end
 

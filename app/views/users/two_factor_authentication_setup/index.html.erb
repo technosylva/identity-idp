@@ -1,5 +1,5 @@
 <% if !@presenter.no_factors_enabled? %>
-  <div class="alert alert-success" role="alert">Your primary authentication method has been successfully set up.</div>
+  <div class="alert alert-success" role="alert"><%= @presenter.first_mfa_successfully_enabled_message %></div>
 <% end %>
 <% title @presenter.title %>
 <h1 class="h3 my0"><%= @presenter.heading %></h1>
@@ -30,15 +30,15 @@
           </div>
         </div>
       </label>
-    <% end %>
+      <% end %>
   </fieldset>
-  </div>
-  <div>
-    <%= f.button :submit, t('forms.buttons.continue'), class: 'sm-col-6 col-12 btn-wide mb1' %>
-  </div>
-  <% end %>
-<div class="mt2 pt1 border-top">
-  <%= render 'shared/cancel', link: destroy_user_session_path %>
 </div>
+
+<div>
+  <%= f.button :submit, t('forms.buttons.continue'), class: 'sm-col-6 col-12 btn-wide mb1' %>
+</div>
+<% end %>
+
+<%= render 'shared/cancel', link: destroy_user_session_path %>
 
 <%= javascript_pack_tag("webauthn-unhide-signup", "webauthn-detect") %>
