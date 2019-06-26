@@ -1,7 +1,5 @@
-class TotpSetupPresenter
-  include ActionView::Helpers::TranslationHelper
-
-  attr_reader :user
+class SetupPresenter
+  attr_reader :current_user, :user_fully_authenticated
 
   def initialize(current_user, user_fully_authenticated)
     @current_user = current_user
