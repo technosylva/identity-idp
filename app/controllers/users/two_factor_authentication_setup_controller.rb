@@ -19,6 +19,7 @@ module Users
       analytics.track_event(Analytics::USER_REGISTRATION_2FA_SETUP, result.to_h)
 
       if result.success?
+        # set_detected_webauthn_option
         backup_code_only_processing
         process_valid_form
       else
@@ -32,6 +33,13 @@ module Users
     def two_factor_options_presenter
       TwoFactorOptionsPresenter.new(current_user, current_sp, session[:signing_up])
     end
+
+    # def set_detected_webauthn_option
+    #   if @two_factor_options_form.selection.to_s == 'detected'
+    #     puts "IN IF STATEMENT"
+    #     @detected = true
+    #   end
+    # end
 
     def backup_code_only_processing
       if session[:signing_up] &&
@@ -52,6 +60,8 @@ module Users
         redirect_to setup_piv_cac_url
       when 'webauthn'
         redirect_to webauthn_setup_url
+      when 'detected'
+        redirect_to webauthn_platform_setup_url
       when 'backup_code'
         redirect_to backup_code_setup_url
       end

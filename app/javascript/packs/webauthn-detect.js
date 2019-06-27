@@ -24,6 +24,7 @@ function detectWebauthn() {
       // change id name
       detectedOption.setAttribute('for', 'two_factor_options_form_selection_detected');
       detectedOption.querySelector('input[type=radio]').setAttribute('id', 'two_factor_options_form_selection_detected');
+      detectedOption.querySelector('input[type=radio]').setAttribute('value', 'detected');
 
       // change label value
       const optionLabel = detectedOption.getElementsByClassName('blue bold fs-20p')[0];
@@ -35,16 +36,15 @@ function detectWebauthn() {
 
       // change tooltip value
       const optionTooltip = detectedOption.getElementsByClassName('hint--right hint--no-animate')[0];
-      console.log(optionTooltip);
+
       optionTooltip.setAttribute('aria-label',
         'Recommended because it is one of the most secure options and '
         + 'we noticed that it is available on your device.');
 
       // bye bye webauthn coloring bc detected option is now at the top!
       webauthnOption.classList.remove('bg-lightest-blue');
-
     }
   });
-
 }
+
 document.addEventListener('DOMContentLoaded', detectWebauthn);

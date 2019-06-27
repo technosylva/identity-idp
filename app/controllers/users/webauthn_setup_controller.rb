@@ -16,6 +16,14 @@ module Users
       flash_error(result.errors) unless result.success?
     end
 
+    def new_platform
+      result = WebauthnVisitForm.new.submit(params)
+      analytics.track_event(Analytics::WEBAUTHN_SETUP_VISIT, result.to_h)
+      save_challenge_in_session
+      @exclude_credentials = exclude_credentials
+      flash_error(result.errors) unless result.success?
+    end
+
     def confirm
       form = WebauthnSetupForm.new(current_user, user_session)
       result = form.submit(request.protocol, params)
@@ -27,7 +35,22 @@ module Users
       end
     end
 
+    def confirm_platform
+      form = WebauthnSetupForm.new(current_user, user_session)
+      result = form.submit(request.protocol, params)
+      analytics.track_event(Analytics::MULTI_FACTOR_AUTH_SETUP, result.to_h)
+      if result.success?
+        process_valid_webauthn_platform
+      else
+        process_invalid_webauthn(form)
+      end
+    end
+
     def success
+      @next_url = url_after_successful_webauthn_setup
+    end
+
+    def success_platform
       @next_url = url_after_successful_webauthn_setup
     end
 
@@ -95,6 +118,13 @@ module Users
       mark_user_as_fully_authenticated
       save_remember_device_preference
       redirect_to webauthn_setup_success_url
+    end
+
+    def process_valid_webauthn_platform
+      create_user_event(:webauthn_key_added)
+      mark_user_as_fully_authenticated
+      save_remember_device_preference
+      redirect_to webauthn_setup_platform_success_url
     end
 
     def url_after_successful_webauthn_setup
