@@ -10,7 +10,8 @@ function detectWebauthn() {
     // FIXME remove exclaimation
     if (!platformAvailable) {
 
-      const currentPlatform = navigator.platform;
+      //const currentPlatform = navigator.platform;
+      const currentPlatform = "Yubico security key";
 
       // create a new option if platform is detected
       const detectedOption = webauthnOption.cloneNode(true);

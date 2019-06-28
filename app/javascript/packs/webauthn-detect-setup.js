@@ -5,7 +5,8 @@ function editDefaultWebauthnPage() {
     // FIXME remove exclaimation
     if (!platformAvailable) {
 
-      const currentPlatform = navigator.platform;
+      //const currentPlatform = navigator.platform;
+      const currentPlatform = "Yubico security key";
 
       // get all the content that needs to be changed
       const detectedTitle = document.getElementsByClassName('h3 my0')[0];
