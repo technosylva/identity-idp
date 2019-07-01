@@ -6,7 +6,7 @@ function editSuccessWebauthnPage() {
     if (!platformAvailable) {
 
       //const currentPlatform = navigator.platform;
-      const currentPlatform = "Yubico security key";
+      const currentPlatform = "Windows Hello";
 
       // get all the content that needs to be changed
       const detectedTitle = document.getElementsByClassName('h3 mb2 mt3 my0')[0];

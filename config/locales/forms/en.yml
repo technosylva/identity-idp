@@ -17,7 +17,7 @@ en:
         will be prompted to download a new list.  Treat your recovery codes with the
         same level of attention as you would your password.
       subtitle: Your backup codes
-      title: Backup Codes
+      title: Backup codes
       warn: Download, print, or write down your personal security codes.
     backup_code_regenerate:
       caution: If you regenerate your backup codes you will receive a new set of backup

@@ -11,7 +11,7 @@ function detectWebauthn() {
     if (!platformAvailable) {
 
       //const currentPlatform = navigator.platform;
-      const currentPlatform = "Yubico security key";
+      const currentPlatform = "Windows Hello";
 
       // create a new option if platform is detected
       const detectedOption = webauthnOption.cloneNode(true);
