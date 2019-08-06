@@ -1,11 +1,12 @@
 const WebAuthn = require('../app/webauthn');
 
+// so that the success page content for security key is updated to reflect whatever platform was detected
 function editSuccessWebauthnPage() {
   PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (platformAvailable) {
     // FIXME remove exclaimation
     if (!platformAvailable) {
 
-      //const currentPlatform = navigator.platform;
+      // const currentPlatform = navigator.platform;
       const currentPlatform = "Windows Hello";
 
       // get all the content that needs to be changed

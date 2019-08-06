@@ -19,10 +19,16 @@
           <%= radio_button_tag('two_factor_options_form[selection]', option.type, index.zero?) %>
           <span class="indicator mt-tiny"></span>
           <span class="<%= option.font_color %> bold fs-20p"><%= option.label %></span>
+
+          <!-- TOOLTIPS -->
           <span class="info-icon"><%= tooltip(option.more_info)%></span>
+
+          <!-- MOST SECURE/RECOMMENDED TAG -->
           <% if option.recommended? %>
             <span class="rec-tag">Most Secure</span>
           <% end %>
+
+          <!-- LEARN MORE LINKS -->
           <div class="regular gray-dark fs-10p mt0 mb-tiny">
             <%= option.info%>
             <%= option.learn_more? ?
@@ -30,6 +36,7 @@
                 option.learn_more_path, target: '_blank' ) :
               ''%>
           </div>
+
         </div>
       </label>
       <% end %>
