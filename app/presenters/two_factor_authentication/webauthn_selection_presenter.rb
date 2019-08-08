@@ -7,5 +7,9 @@ module TwoFactorAuthentication
     def html_class
       'hide'
     end
+
+    def recommended?
+      true
+    end
   end
 end

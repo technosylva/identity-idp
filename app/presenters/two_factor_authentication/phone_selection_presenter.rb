@@ -23,6 +23,10 @@ module TwoFactorAuthentication
       end
     end
 
+    def recommended?
+      false
+    end
+
     private
 
     def masked_number(number)

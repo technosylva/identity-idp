@@ -50,6 +50,28 @@ textarea {
   margin-left: $radio-checkbox-space;
 }
 
+// tooltip icons
+.info-icon {
+  margin-right: 4px;
+  margin-top: -2px;
+  float: right;
+}
+
+// recommended/most secure tags
+ .rec-tag {
+  height: 27px;
+  width: 105px;
+  background-color: $teal-light;
+  border: 1px solid $teal-dark;
+  border-radius: 3px;
+  color: $teal-dark;
+  font-weight: bold;
+  float: right;
+  margin-right: 10px;
+  text-align: center;
+  cursor: default;
+}
+
 
 // error states
 .has-error input {

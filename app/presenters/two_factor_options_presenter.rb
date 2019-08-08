@@ -39,7 +39,7 @@ class TwoFactorOptionsPresenter
   end
 
   def options
-    phone_options + totp_option + webauthn_option + piv_cac_option + backup_code_option
+    webauthn_option + piv_cac_option + totp_option + phone_options + backup_code_option
   end
 
   def first_mfa_successfully_enabled_message

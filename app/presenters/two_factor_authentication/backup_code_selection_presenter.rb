@@ -12,5 +12,9 @@ module TwoFactorAuthentication
         :backup_code
       end
     end
+
+    def recommended?
+      false
+    end
   end
 end

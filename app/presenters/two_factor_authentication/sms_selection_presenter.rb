@@ -3,5 +3,9 @@ module TwoFactorAuthentication
     def method
       :sms
     end
+
+    def recommended?
+      false
+    end
   end
 end

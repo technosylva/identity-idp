@@ -3,5 +3,9 @@ module TwoFactorAuthentication
     def method
       :voice
     end
+
+    def recomended?
+      false
+    end
   end
 end
