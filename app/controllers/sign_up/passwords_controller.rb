@@ -44,10 +44,11 @@ module SignUp
     end
 
     def process_successful_password_creation
+      @user.confirm
       password = permitted_params[:password]
       UpdateUser.new(
         user: @user,
-        attributes: { password: password, confirmed_at: Time.zone.now },
+        attributes: { password: password },
       ).call
       Funnel::Registration::AddPassword.call(@user.id)
       sign_in_and_redirect_user

@@ -77,8 +77,7 @@ describe 'Remembering a TOTP device' do
 
     def remember_device_and_sign_out_user
       sign_in_and_2fa_user(user)
-      page.find('.remove-auth-app').click # Delete
-      click_on t('account.index.totp_confirm_delete')
+      find("button[type='submit']").click # Delete
       Timecop.travel 5.seconds.from_now # Travel past the revoked at date from disabling the device
       click_link t('forms.buttons.enable'), href: authenticator_setup_url
       fill_in :code, with: totp_secret_from_page

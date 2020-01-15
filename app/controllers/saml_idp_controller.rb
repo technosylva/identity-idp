@@ -75,7 +75,9 @@ class SamlIdpController < ApplicationController
   end
 
   def handle_successful_handoff
-    track_events
+    analytics.track_event(Analytics::SP_REDIRECT_INITIATED)
+    Db::SpReturnLog::AddReturn.call(request_id, current_user.id)
+    increment_monthly_auth_count
     delete_branded_experience
     render_template_for(saml_response, saml_request.response_url, 'SAMLResponse')
   end
@@ -94,12 +96,5 @@ class SamlIdpController < ApplicationController
       locals: { action_url: action_url, message: message, type: type, csp_uris: csp_uris },
       layout: false,
     )
-  end
-
-  def track_events
-    analytics.track_event(Analytics::SP_REDIRECT_INITIATED)
-    Db::SpReturnLog::AddReturn.call(request_id, current_user.id)
-    increment_monthly_auth_count
-    add_sp_cost(:authentication)
   end
 end

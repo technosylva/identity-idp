@@ -5,7 +5,7 @@ module TwoFactorAuthentication
     end
 
     def configured?
-      user&.auth_app_configurations&.any?
+      user.otp_secret_key.present?
     end
 
     def available?

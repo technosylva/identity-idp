@@ -18,7 +18,7 @@ class TotpVerificationForm
 
   def valid_totp_code?
     return false unless code.match? pattern_matching_totp_code_format
-    Db::AuthAppConfiguration::Authenticate.call(user, code)
+    user.authenticate_totp(code)
   end
 
   def pattern_matching_totp_code_format

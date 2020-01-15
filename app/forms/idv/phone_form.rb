@@ -16,7 +16,6 @@ module Idv
     def submit(params)
       self.phone = PhoneFormatter.format(params[:phone])
       success = valid?
-      self.phone = params[:phone] unless success
 
       FormResponse.new(success: success, errors: errors.messages, extra: extra_analytics_attributes)
     end
@@ -37,11 +36,11 @@ module Idv
 
     # :reek:FeatureEnvy
     def initial_phone_value(input_phone)
-      return input_phone if input_phone.present?
+      return PhoneFormatter.format(input_phone) if input_phone.present?
 
       user_phone = MfaContext.new(user).phone_configurations.take&.phone
       return unless Phonelib.valid_for_country?(user_phone, 'US')
-      user_phone
+      PhoneFormatter.format(user_phone)
     end
 
     def phone_is_a_valid_us_number

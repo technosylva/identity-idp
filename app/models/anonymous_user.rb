@@ -20,10 +20,6 @@ class AnonymousUser
     PivCacConfiguration.none
   end
 
-  def auth_app_configurations
-    AuthAppConfiguration.none
-  end
-
   def webauthn_configurations
     WebauthnConfiguration.none
   end

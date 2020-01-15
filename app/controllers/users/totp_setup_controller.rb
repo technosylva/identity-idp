@@ -9,9 +9,10 @@ module Users
     before_action :confirm_user_authenticated_for_2fa_setup
     before_action :set_totp_setup_presenter
     before_action :apply_secure_headers_override
-    before_action :cap_auth_app_count, only: %i[new confirm]
 
     def new
+      return redirect_to account_url if current_user.totp_enabled?
+
       store_totp_secret_in_session
       track_event
 
@@ -20,7 +21,7 @@ module Users
     end
 
     def confirm
-      result = totp_setup_form.submit
+      result = TotpSetupForm.new(current_user, new_totp_secret, params[:code].strip).submit
 
       analytics.track_event(Analytics::MULTI_FACTOR_AUTH_SETUP, result.to_h)
 
@@ -32,19 +33,13 @@ module Users
     end
 
     def disable
-      process_successful_disable if MfaPolicy.new(current_user).more_than_two_factors_enabled?
-
+      if current_user.totp_enabled? && MfaPolicy.new(current_user).more_than_two_factors_enabled?
+        process_successful_disable
+      end
       redirect_to account_url
     end
 
     private
-
-    def totp_setup_form
-      @totp_setup_form ||= TotpSetupForm.new(current_user,
-                                             new_totp_secret,
-                                             params[:code].strip,
-                                             params[:name].to_s.strip)
-    end
 
     def set_totp_setup_presenter
       @presenter = SetupPresenter.new(current_user, user_fully_authenticated?)
@@ -92,7 +87,10 @@ module Users
     end
 
     def revoke_otp_secret_key
-      Db::AuthAppConfiguration::Delete.call(current_user, params[:id].to_i)
+      UpdateUser.new(
+        user: current_user,
+        attributes: { otp_secret_key: nil },
+      ).call
     end
 
     def mark_user_as_fully_authenticated
@@ -105,24 +103,12 @@ module Users
     end
 
     def process_invalid_code
-      flash[:error] = if totp_setup_form.name_taken
-                        t('errors.piv_cac_setup.unique_name')
-                      else
-                        t('errors.invalid_totp')
-                      end
+      flash[:error] = t('errors.invalid_totp')
       redirect_to authenticator_setup_url
     end
 
     def new_totp_secret
       user_session[:new_totp_secret]
-    end
-
-    def cap_auth_app_count
-      redirect_to account_url if Figaro.env.max_auth_apps_per_account.to_i <= current_auth_app_count
-    end
-
-    def current_auth_app_count
-      current_user.auth_app_configurations.count
     end
   end
 end

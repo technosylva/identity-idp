@@ -34,7 +34,12 @@
   <% if TwoFactorAuthentication::PhonePolicy.new(current_user).visible? %>
     <%= render 'phone' %>
   <% end %>
-  <%= render 'auth_apps' %>
+  <% if TwoFactorAuthentication::AuthAppPolicy.new(current_user).visible?%>
+  <%= render 'account_item',
+    name: t('account.index.authentication_app'),
+    content: content_tag(:em, @view_model.totp_content),
+    action: @view_model.totp_partial %>
+  <% end %>
   <% if TwoFactorAuthentication::WebauthnPolicy.new(current_user).visible? %>
     <%= render 'webauthn' %>
   <% end %>

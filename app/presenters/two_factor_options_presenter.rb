@@ -92,11 +92,17 @@ class TwoFactorOptionsPresenter
   end
 
   def totp_option
-    [TwoFactorAuthentication::AuthAppSelectionPresenter.new]
+    if TwoFactorAuthentication::AuthAppPolicy.new(current_user).enrollable?
+      [TwoFactorAuthentication::AuthAppSelectionPresenter.new]
+    else
+      []
+    end
   end
 
   def piv_cac_option
     return [] unless @is_desktop
+    policy = TwoFactorAuthentication::PivCacPolicy.new(current_user)
+    return [] if policy.enabled?
     [TwoFactorAuthentication::PivCacSelectionPresenter.new]
   end
 

@@ -87,7 +87,6 @@ detectors:
       - Idv::VendorResult
       - CloudhsmKeyGenerator
       - CloudhsmKeySharer
-      - TotpSetupForm
       - UserMailer
       - WebauthnSetupForm
       - WebauthnVerificationForm

@@ -62,8 +62,7 @@ feature 'taking an action that revokes remember device' do
       sign_in_with_remember_device_and_sign_out
 
       sign_in_user(user)
-      page.find('.remove-auth-app').click # Delete
-      click_on t('account.index.totp_confirm_delete')
+      find("button[type='submit']").click # Delete
       first(:link, t('links.sign_out')).click
 
       expect_mfa_to_be_required_for_user(user)

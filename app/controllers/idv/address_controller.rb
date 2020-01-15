@@ -5,7 +5,6 @@ module Idv
     before_action :confirm_two_factor_authenticated
 
     def new
-      @pii = user_session['idv/doc_auth']['pii_from_doc']
       analytics.track_event(Analytics::IDV_ADDRESS_VISIT)
     end
 

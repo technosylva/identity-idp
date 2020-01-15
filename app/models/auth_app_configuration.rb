@@ -1,15 +1,14 @@
-class AuthAppConfiguration < ApplicationRecord
-  include EncryptableAttribute
+class AuthAppConfiguration
+  # This is a wrapping class that lets us interface with the auth app configuration in a manner
+  # consistent with phone and webauthn configurations.
+  attr_reader :user
 
-  encrypted_attribute(name: :otp_secret_key)
-
-  belongs_to :user
-
-  validates :user_id, presence: true
-  validates :name, presence: true
+  def initialize(user)
+    @user = user
+  end
 
   def mfa_enabled?
-    otp_secret_key.present?
+    user&.otp_secret_key.present?
   end
 
   def selection_presenters
@@ -25,10 +24,6 @@ class AuthAppConfiguration < ApplicationRecord
   end
 
   def self.selection_presenters(set)
-    if set.any?
-      set.first.selection_presenters
-    else
-      []
-    end
+    set.flat_map(&:selection_presenters)
   end
 end
