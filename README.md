@@ -30,7 +30,7 @@ A Identity Management System powering login.gov.
   ```
   git clone git://github.com/tpope/rbenv-aliases.git "$(rbenv root)/plugins/rbenv-aliases" # install rbenv-aliases per its documentation
 
-  rbenv alias 2.5 2.5.3 # create the version alias
+  rbenv alias 2.6 2.6.5 # create the version alias
   ```
 
 2. Make sure Postgres and Redis are running.
