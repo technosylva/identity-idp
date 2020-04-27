@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: idp
+  namespace: identity-platform
+spec:
+  selector:
+    app: idp
+  ports:
+  - port: 3000
+    targetPort: 3000

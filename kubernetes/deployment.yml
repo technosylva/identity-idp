@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idp
+  namespace: identity-platform
+spec:
+  selector:
+    matchLabels:
+      app: idp
+  template:
+    metadata:
+      labels:
+        app: idp
+    spec:
+      containers:
+      - name: idp
+        image: logindotgov/idp:908ed4549
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: redis_url
+          value: "redis://redis-master:6379"
+        - name: redis_throttle_url
+          value: "redis://redis-master:6379"
+        - name: NODE_ENV
+          value: "production"
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: config
+          mountPath: /upaya/config/
+      volumes:
+        - name: config
+          configMap:
+            name: idp
+            items:
+              - key: application.yml
+                path: application.yml
+        - name: db
+          configMap:
+            # if you are running in development and need it,
+            # set this to `idp-db-dev`
+            name: idp-db
+            items:
+            - key: database.yml
+              path: database.yml
