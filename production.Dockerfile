@@ -6,7 +6,7 @@ WORKDIR /upaya
 
 # Prod Gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --deployment --clean --without development test
+RUN bundle install --system --without development test
 
 # Prod NPM packages
 COPY package.json yarn.lock ./
@@ -16,6 +16,9 @@ RUN NODE_ENV=production yarn install --force \
 # Switch to base image
 FROM logindotgov/base
 WORKDIR /upaya
+
+# Copy system Gems into base container
+COPY --from=build /usr/local/bundle /usr/local/bundle
 
 # Copy Gems, NPMs, and other relevant items from build layer
 COPY --chown=appuser:appuser --from=build /upaya .
