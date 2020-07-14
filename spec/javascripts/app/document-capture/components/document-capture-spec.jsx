@@ -7,10 +7,9 @@ describe('document-capture/components/document-capture', () => {
   useDOM();
 
   it('renders', () => {
-    const { getByText } = render(<DocumentCapture />);
+    const { getByAltText } = render(<DocumentCapture />);
 
-    const button = getByText('Document Capture');
-
-    expect(button).to.be.ok();
+    const img = getByAltText('doc_auth.headings.welcome');
+    expect(img).to.be.ok();
   });
 });
