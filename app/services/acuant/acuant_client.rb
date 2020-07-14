@@ -5,11 +5,12 @@ module Acuant
     end
 
     def post_front_image(image:, instance_id:)
-      Requests::UploadImageRequest.new(
+      result = Requests::UploadImageRequest.new(
         instance_id: instance_id,
         image_data: image,
         side: :front,
       ).fetch
+      result
     end
 
     def post_back_image(image:, instance_id:)
@@ -18,6 +19,18 @@ module Acuant
         image_data: image,
         side: :back,
       ).fetch
+    end
+
+    def post_images(front_image:, back_image:, instance_id:)
+      front_response = post_front_image(image: front_image, instance_id: instance_id)
+      back_response = post_back_image(image: back_image, instance_id: instance_id)
+
+      Acuant::Response.new(
+        success: front_response.success? && back_response.success?,
+        errors: (front_response.errors || []) + (back_response.errors || []),
+        exception: front_response.exception || back_response.exception,
+        extra: { front_response: front_response, back_response: back_response },
+      )
     end
 
     def get_results(instance_id:)
