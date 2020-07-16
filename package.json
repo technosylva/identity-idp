@@ -13,6 +13,7 @@
   "dependencies": {
     "@rails/webpacker": "^4.1.0",
     "@testing-library/react": "^10.4.5",
+    "@trussworks/react-uswds": "^1.6.1",
     "base32-crockford-browser": "^1.0.0",
     "basscss-sass": "^3.0.0",
     "classlist.js": "^1.1.20150312",
