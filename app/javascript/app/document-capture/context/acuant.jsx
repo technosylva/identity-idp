@@ -18,20 +18,42 @@ function AcuantContextProvider({ sdkSrc, credentials, endpoint, children }) {
     credentials,
   ]);
 
+  let acuantLoaded = false;
+
   useEffect(() => {
     // Acuant SDK expects this global to be assigned at the time the script is
     // loaded, which is why the script element is manually appended to the DOM.
     const originalOnAcuantSdkLoaded = window.onAcuantSdkLoaded;
     window.onAcuantSdkLoaded = () => {
       window.AcuantJavascriptWebSdk.initialize(credentials, endpoint, {
-        onSuccess: () => setIsReady(true),
-        onFail: () => setIsError(true),
+        onSuccess: () => {
+          acuantLoaded = true;
+          setIsReady(true);
+        },
+        onFail: () => {
+          acuantLoaded = true;
+          setIsError(true);
+        },
       });
     };
 
     const script = document.createElement('script');
     script.async = true;
     script.src = sdkSrc;
+
+    const acuantCheck = () => {
+      setTimeout(() => {
+        console.log('acuantLoaded', acuantLoaded);
+        if (!acuantLoaded) {
+          console.log('Reloading acuant...');
+          document.body.removeChild(script);
+          document.body.appendChild(script);
+          acuantCheck();
+        }
+      }, 3000);
+    };
+
+    acuantCheck();
     document.body.appendChild(script);
 
     return () => {
