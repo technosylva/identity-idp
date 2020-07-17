@@ -35,7 +35,7 @@ function AcuantContextProvider({ sdkSrc, credentials, endpoint, children }) {
     const script = document.createElement('script');
     script.async = true;
     script.src = sdkSrc;
-    script.onError = () => {
+    script.onerror = () => {
       retries += 1;
       if (retries <= maxRetries) {
         document.body.removeChild(script);
