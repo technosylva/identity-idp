@@ -18,7 +18,8 @@ function AcuantContextProvider({ sdkSrc, credentials, endpoint, children }) {
     credentials,
   ]);
 
-  let acuantLoaded = false;
+  const maxRetries = 3;
+  let retries = 0;
 
   useEffect(() => {
     // Acuant SDK expects this global to be assigned at the time the script is
@@ -26,33 +27,23 @@ function AcuantContextProvider({ sdkSrc, credentials, endpoint, children }) {
     const originalOnAcuantSdkLoaded = window.onAcuantSdkLoaded;
     window.onAcuantSdkLoaded = () => {
       window.AcuantJavascriptWebSdk.initialize(credentials, endpoint, {
-        onSuccess: () => {
-          acuantLoaded = true;
-          setIsReady(true);
-        },
-        onFail: () => {
-          acuantLoaded = true;
-          setIsError(true);
-        },
+        onSuccess: () => setIsReady(true),
+        onFail: () => setIsError(true),
       });
     };
 
     const script = document.createElement('script');
     script.async = true;
     script.src = sdkSrc;
-
-    const acuantCheck = () => {
-      setTimeout(() => {
-        if (!acuantLoaded) {
-          console.log('Reloading acuant...');
-          document.body.removeChild(script);
-          document.body.appendChild(script);
-          acuantCheck();
-        }
-      }, 3000);
+    script.onError = () => {
+      retries += 1;
+      if (retries <= maxRetries) {
+        document.body.removeChild(script);
+        document.body.appendChild(script);
+      } else {
+        setIsError(true);
+      }
     };
-
-    acuantCheck();
     document.body.appendChild(script);
 
     return () => {
