@@ -43,7 +43,6 @@ function AcuantContextProvider({ sdkSrc, credentials, endpoint, children }) {
 
     const acuantCheck = () => {
       setTimeout(() => {
-        console.log('acuantLoaded', acuantLoaded);
         if (!acuantLoaded) {
           console.log('Reloading acuant...');
           document.body.removeChild(script);
