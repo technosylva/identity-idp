@@ -5,6 +5,15 @@
 # https://github.com/roidrage/redis-session-store/pull/119
 Redis.exists_returns_integer = true
 
+# cloud.gov redis compatibility
+if ENV['VCAP_SERVICES']
+  services = JSON.parse(ENV['VCAP_SERVICES'])
+  credentials = services['redis32'].first['credentials']
+  redis_url = "redis://:#{credentials['password']}@#{credentials['hostname']}:#{credentials['port']}"
+else
+  redis_url = Figaro.env.redis_url
+end
+
 require 'session_encryptor'
 
 options = {
@@ -19,7 +28,7 @@ options = {
     ttl: Figaro.env.session_timeout_in_minutes.to_i.minutes,
 
     key_prefix: "#{Figaro.env.domain_name}:session:",
-    url: Figaro.env.redis_url,
+    url: redis_url,
   },
   on_session_load_error: SessionEncryptorErrorHandler,
   serializer: SessionEncryptor.new,

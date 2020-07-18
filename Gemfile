@@ -35,6 +35,7 @@ gem 'premailer-rails', '>= 1.11.1'
 gem 'proofer', github: '18F/identity-proofer-gem', tag: 'v2.7.0'
 gem 'pry-doc'
 gem 'pry-rails'
+gem 'puma'
 gem 'rack-attack', '>= 6.2.1'
 gem 'rack-cors', '>= 1.0.5', require: 'rack/cors'
 gem 'rack-headers_filter'
@@ -91,7 +92,6 @@ group :development, :test do
   gem 'parallel_tests'
   gem 'pry-byebug'
   gem 'psych'
-  gem 'puma'
   gem 'rspec-rails', '~> 3.9', '>= 3.9.1'
   gem 'rubocop', '~> 0.72.0', require: false
   gem 'rubocop-rails', '>= 2.3.2', require: false
