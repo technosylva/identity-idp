@@ -52,10 +52,16 @@ applications:
       backup_codes_as_only_2fa: 'false'
       cac_proofing_enabled: 'true'
       database_statement_timeout: '2500'
+      # Database settings for cloud.gov are overidden in config/database.yml
+      database_host: ''
+      database_name: ''
+      database_password: ''
+      database_pool_idp:
       database_read_replica_host: ''
       database_readonly_password:
       database_readonly_username:
       database_timeout:
+      database_username: ''
       disable_email_sending: ((disable_email_sending))
       disallow_all_web_crawlers: 'false'
       disallow_ial2_recovery: 'true'
@@ -147,6 +153,10 @@ applications:
       recaptcha_site_key: key1
       recovery_code_length: '4'
       recurring_jobs_disabled_names: ((recurring_jobs_disabled_names))
+      # redis_throttle_url set for cloud.gov in initializers/rack_attack.rb
+      redis_throttle_url:
+      # redis_url set for cloud.gov in config/initializers/session_store.rb
+      redis_url:
       reg_confirmed_email_max_attempts: '20'
       reg_unconfirmed_email_max_attempts: '20'
       reg_confirmed_email_window_in_minutes: '60'

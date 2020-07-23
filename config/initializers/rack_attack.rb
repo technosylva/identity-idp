@@ -24,9 +24,18 @@ module Rack
     # not blocklisting & safelisting. It must implement .increment and .write
     # like ActiveSupport::Cache::Store
 
+    # cloud.gov redis compatibility
+    if ENV['VCAP_SERVICES']
+      services = JSON.parse(ENV['VCAP_SERVICES'])
+      credentials = services['redis32'].first['credentials']
+      redis_throttle_url = "redis://:#{credentials['password']}@#{credentials['hostname']}:#{credentials['port']}/1"
+    else
+      redis_throttle_url = Figaro.env.redis_throttle_url
+    end
+
     cache = Readthis::Cache.new(
       expires_in: 2.weeks.to_i,
-      redis: { url: Figaro.env.redis_throttle_url, driver: :hiredis },
+      redis: { url: redis_throttle_url, driver: :hiredis },
     )
 
     Rack::Attack.cache.store = cache
