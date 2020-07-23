@@ -269,7 +269,22 @@ JavaScript unit tests run using the mocha test runner. Check out the
 
 To deploy to cloud.gov, you will need >= v6.32 of the [CloudFoundry CLI](https://cloud.gov/docs/getting-started/setup/#set-up-the-command-line). For more information about cloud.gov, [check out the beautiful docs](https://cloud.gov/docs/).
 
-To configure your instances for cloud.gov, simply add a `cloud.gov` entry to your `config/application.yml` file and execute `bin/push_cloud_dot_gov`. The script will create the requisite services, set the ENV configuration, and create your web and worker instances.
+To configure your instances for cloud.gov:
+* Add a `cloud.gov` entry to your `config/application.yml` file
+* Decide on a name for this instance and set `APP_NAME`: `export APP_NAME="my-idp"`
+* Go!: `bin/push_cloud_dot_gov`
+
+The script will create the requisite services, set the ENV configuration, and create your web and worker instances.  When complete your instance should be available at `https://${APP_NAME}.app.cloud.gov`
+
+Once `bin/push_cloud_dot_gov` completes you can push updates with `cf push ${APP_NAME}`.
+
+Helpful commands:
+
+* Check status of app: `cf app ${APP_NAME}`
+* Tail logs: `cf logs ${APP_NAME}`
+* Show current environment: `cf env ${APP_NAME}`
+
+If your IdP is not happy see <https://docs.cloudfoundry.org/devguide/deploy-apps/troubleshoot-app-health.html> for more troubleshooting tips.
 
 #### Caveats
 

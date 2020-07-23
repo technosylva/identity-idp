@@ -1,12 +1,193 @@
+---
+
+defaults: &defaults
+  buildpacks:
+    - https://github.com/cloudfoundry/multi-buildpack
+  memory: 256M
+
 applications:
-- name: login-idp-app
-  buildpack: https://github.com/cloudfoundry/multi-buildpack
-  services:
-  - postgres
-  - redis
-env:
-  BUNDLE_WITHOUT: development:deploy:test
-  RAILS_SERVE_STATIC_FILES: true
-  RAILS_ENV: production
-  RACK_ENV: production
-  
+  - name: login-idp-app
+    <<: *defaults
+    services:
+      - postgres
+      - redis
+    env:
+      # TODO - This stinks.  Hate it.  Need a better way to maintain all these settings
+      # while still keepin' it 12-factor.
+      BUNDLE_WITHOUT: development:deploy:test
+      RAILS_SERVE_STATIC_FILES: true
+      RAILS_ENV: production
+      RACK_ENV: production
+      # The remainder are items are static or pulled from application-cloud-dot-gov.yml
+      # Use the --vars-file config/application-cloud-dot-gov.yml if using cf push directly.
+      RACK_TIMEOUT_SERVICE_TIMEOUT: '15'
+      aamva_cert_enabled: 'true'
+      aamva_sp_banlist_issuers: '[]'
+      account_reset_auth_token: ((account_reset_auth_token))
+      account_reset_token_valid_for_days: '1'
+      account_reset_wait_period_days: '1'
+      acuant_assure_id_password: ''
+      acuant_assure_id_subscription_id: ''
+      acuant_assure_id_username: ''
+      acuant_attempt_window_in_minutes: '1440'
+      acuant_facial_match_license_key: ''
+      acuant_sdk_document_capture_enabled: 'false'
+      # These are dummy creds used to initialize the acuant SDK
+      acuant_sdk_initialization_creds: 'aWRzY2FuZ293ZWJAYWN1YW50Y29ycC5jb206NVZLcm81Z0JEc1hrdFh2NA=='
+      acuant_sdk_initialization_endpoint: 'https://services.assureid.net'
+      acuant_timeout: '45'
+      add_email_link_valid_for_hours: '24'
+      asset_host:
+      async_job_refresh_max_wait_seconds: '15'
+      attribute_cost: ((attribute_cost))
+      attribute_encryption_key: ((attribute_encryption_key))
+      attribute_encryption_key_queue: ((attribute_encryption_key_queue))
+      available_locales: en es fr
+      aws_http_timeout: '5'
+      aws_kms_key_id: ((aws_kms_key_id))
+      aws_kms_regions: ((aws_kms_regions))
+      aws_logo_bucket: ((aws_logo_bucket))
+      aws_region: ((aws_region))
+      aws_kms_multi_region_enabled: 'false'
+      backup_codes_as_only_2fa: 'false'
+      cac_proofing_enabled: 'true'
+      database_statement_timeout: '2500'
+      database_read_replica_host: ''
+      database_readonly_password:
+      database_readonly_username:
+      database_timeout:
+      disable_email_sending: ((disable_email_sending))
+      disallow_all_web_crawlers: 'false'
+      disallow_ial2_recovery: 'true'
+      doc_auth_enabled: ((doc_auth_enabled))
+      doc_auth_vendor: ((doc_auth_vendor))
+      doc_capture_polling_enabled: ((doc_capture_polling_enabled))
+      doc_capture_request_valid_for_minutes: '15'
+      doc_auth_extend_timeout_by_minutes: '40'
+      domain_name: ((domain_name))
+      email_deletion_enabled: 'false'
+      email_from: no-reply@login.gov
+      enable_load_testing_mode: ((enable_load_testing_mode))
+      enable_rate_limiting: ((enable_rate_limiting))
+      enable_test_routes: 'false'
+      enable_usps_verification: 'false'
+      event_disavowal_expiration_hours: '240'
+      exception_recipients: ((exception_recipients))
+      expired_letters_auth_token:
+      hmac_fingerprinter_key: ((hmac_fingerprinter_key))
+      hmac_fingerprinter_key_queue: ((hmac_fingerprinter_key_queue))
+      issuers_with_email_nameid_format: sp1,sp2
+      google_analytics_key:
+      google_analytics_timeout: '5'
+      ial2_recovery_request_valid_for_minutes: '15'
+      identity_pki_disabled: 'true'
+      identity_pki_local_dev: 'false'
+      idv_attempt_window_in_hours: '24'
+      idv_max_attempts: '3'
+      idv_send_link_attempt_window_in_minutes: '10'
+      idv_send_link_max_attempts: '5'
+      in_person_proofing_enabled:
+      job_run_healthchecks_enabled: 'true'
+      lexisnexis_account_id: test_account
+      lexisnexis_base_url: https://www.example.com
+      lexisnexis_instant_verify_workflow: customers.gsa.instant.verify.workflow
+      lexisnexis_password: test_password
+      lexisnexis_phone_finder_workflow: customers.gsa.phonefinder.workflow
+      lexisnexis_request_mode: testing
+      lexisnexis_username: test_username
+      liveness_checking_enabled: 'false'
+      lockout_period_in_minutes: '10'
+      login_with_piv_cac: ((login_with_piv_cac))
+      logins_per_email_and_ip_bantime: '60'
+      logins_per_email_and_ip_period: '60'
+      logins_per_ip_period: '60'
+      logins_per_email_and_ip_limit: '5'
+      logins_per_ip_limit: '5'
+      logins_per_ip_track_only_mode: 'true'
+      logo_upload_enabled: 'false'
+      mailer_domain_name: ((mailer_domain_name))
+      max_auth_apps_per_account: '2'
+      max_emails_per_account: '12'
+      max_mail_events: '4'
+      max_mail_events_window_in_days: '30'
+      max_piv_cac_per_account: '2'
+      min_password_score: '3'
+      mx_timeout: '3'
+      newrelic_browser_app_id: ''
+      newrelic_browser_key: ''
+      newrelic_license_key: ''
+      no_sp_campaigns_whitelist: '[]'
+      nonessential_email_banlist: '[]'
+      otp_valid_for: '10'
+      otp_delivery_blocklist_findtime: '5'
+      otp_delivery_blocklist_maxretry: '10'
+      participate_in_dap: 'false'
+      password_max_attempts: '3'
+      personal_key_retired: 'true'
+      password_pepper: ((password_pepper))
+      pii_lock_timeout_in_minutes: '30'
+      pinpoint_sms_application_id:
+      pinpoint_sms_credential_role_arn:
+      pinpoint_sms_longcode_pool:
+      pinpoint_sms_region:
+      pinpoint_sms_shortcode:
+      pinpoint_voice_credential_role_arn:
+      pinpoint_voice_longcode_pool:
+      pinpoint_voice_region:
+      piv_cac_service_url: ((piv_cac_service_url))
+      piv_cac_verify_token_secret: ((piv_cac_verify_token_secret))
+      piv_cac_verify_token_url:
+      proofer_mock_fallback: 'true'
+      proofer_vendors:
+      push_notifications_enabled:
+      rack_mini_profiler:
+      reauthn_window: '120'
+      recaptcha_enabled_percent: '0'
+      recaptcha_secret_key: key2
+      recaptcha_site_key: key1
+      recovery_code_length: '4'
+      recurring_jobs_disabled_names: ((recurring_jobs_disabled_names))
+      reg_confirmed_email_max_attempts: '20'
+      reg_unconfirmed_email_max_attempts: '20'
+      reg_confirmed_email_window_in_minutes: '60'
+      remember_device_expiration_hours_aal_1: '720'
+      remember_device_expiration_hours_aal_2: '12'
+      remote_settings_certs_dir: 'https://assets.login.gov/certs/'
+      remote_settings_config_dir: 'https://assets.login.gov/config/'
+      remote_settings_logos_dir: 'https://assets.login.gov/assets/images/logos/'
+      remote_settings_whitelist: 'https://login.gov|https://.*\.login.gov|https://raw.githubusercontent.com/18F/identity-idp/'
+      requests_per_ip_limit: '300'
+      requests_per_ip_period: '300'
+      reset_password_email_max_attempts: '20'
+      reset_password_email_window_in_minutes: '60'
+      report_timeout:
+      requests_per_ip_track_only_mode: 'false'
+      s3_report_bucket_prefix: ((s3_report_bucket_prefix))
+      s3_reports_enabled: ((s3_reports_enabled))
+      saml_endpoint_configs: ((saml_endpoint_configs))
+      saml_secret_rotation_enabled: 'false'
+      scrypt_cost: ((scrypt_cost))
+      secret_key_base: ((secret_key_base))
+      session_encryption_key: ((session_encryption_key))
+      service_provider_request_ttl_hours: '24'
+      session_check_delay: '30'
+      session_check_frequency: '30'
+      session_timeout_in_minutes: '15'
+      session_timeout_warning_seconds: '150'
+      sp_handoff_bounce_max_seconds: '2'
+      sps_over_quota_limit_notify_email_list: '[]'
+      show_user_attribute_deprecation_warnings: 'false'
+      telephony_adapter: ((telephony_adapter))
+      unauthorized_scope_enabled: 'false'
+      use_dashboard_service_providers: ((use_dashboard_service_providers))
+      use_kms: ((use_kms))
+      usps_confirmation_max_days: '30'
+      usps_download_sftp_directory:
+      usps_download_sftp_host:
+      usps_download_sftp_password:
+      usps_download_sftp_username:
+      usps_download_token:
+      usps_download_sftp_timeout: '5'
+      usps_upload_enabled: 'false'
+      usps_upload_sftp_timeout: '5'
+      valid_authn_contexts: '["http://idmanagement.gov/ns/assurance/loa/1", "http://idmanagement.gov/ns/assurance/loa/3", "http://idmanagement.gov/ns/assurance/ial/1", "http://idmanagement.gov/ns/assurance/ial/2", "http://idmanagement.gov/ns/assurance/ial/0", "http://idmanagement.gov/ns/assurance/ial/2?strict=true", "http://idmanagement.gov/ns/assurance/aal/2", "http://idmanagement.gov/ns/assurance/aal/3"]'

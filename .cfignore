@@ -12,6 +12,7 @@
 .databag_secret
 .env
 .idea
+*.md
 .powrc
 .sass-cache
 .zeus.sock
@@ -26,6 +27,7 @@
 # root files
 bootstrap.sh
 capybara-*.html
+Dockerfile*
 latest.dump
 Guardfile
 rerun.txt
@@ -41,9 +43,14 @@ Procfile
 /doc/search_stats.csv
 /kitchen/nodes/*.json
 /log/*
+/node_modules
+/postgres-data
 /public/system
 /spec/tmp
 /tmp
 /vendor/bundle
 
+# All CloudFoundry settings should be injected through environment
 /config/application.yml
+/config/application_cloud_dot_gov.yml
+

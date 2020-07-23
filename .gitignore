@@ -36,6 +36,7 @@ Vagrantfile
 # folders
 /certs
 /config/application.yml
+/config/application_cloud_dot_gov.yml
 /config/aws.yml
 /config/service_providers.yml
 /config/agencies.yml
