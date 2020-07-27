@@ -133,11 +133,13 @@ applications:
       password_pepper: ((password_pepper))
       pii_lock_timeout_in_minutes: '30'
       pinpoint_sms_application_id:
+      pinpoint_sms_configs: '[]'
       pinpoint_sms_credential_role_arn:
       pinpoint_sms_longcode_pool:
       pinpoint_sms_region:
       pinpoint_sms_shortcode:
       pinpoint_voice_credential_role_arn:
+      pinpoint_voice_configs: '[]'
       pinpoint_voice_longcode_pool:
       pinpoint_voice_region:
       piv_cac_service_url: ((piv_cac_service_url))
