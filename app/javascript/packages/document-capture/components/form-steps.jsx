@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert } from '@18f/identity-components';
+import {
+  track as trackPromise,
+  isPending as isPromisePending,
+} from '@18f/identity-promise-pending';
 import Button from './button';
 import PageHeading from './page-heading';
 import FormErrorMessage, { RequiredValueMissingError } from './form-error-message';
@@ -94,6 +98,23 @@ function getFieldActiveErrorFieldElement(errors, fields) {
   }
 }
 
+function isPromise(value) {
+  return typeof value?.then === 'function';
+}
+
+function trackPromiseValues(values) {
+  Object.keys(values).forEach((key) => {
+    const value = values[key];
+    if (isPromise(value)) {
+      trackPromise(value);
+    }
+  });
+}
+
+function hasPendingPromiseValue(values) {
+  return Object.keys(values).some((key) => isPromisePending(values[key]));
+}
+
 /**
  * @param {FormStepsProps} props Props object.
  */
@@ -149,6 +170,27 @@ function FormSteps({
     }, /** @type {FormStepError<Record<string,Error>>[]} */ ([]));
   }
 
+  function onChange(nextValuesPatch) {
+    setActiveErrors((prevActiveErrors) =>
+      prevActiveErrors.filter(({ field }) => !(field in nextValuesPatch)),
+    );
+    setValues((prevValues) => ({ ...prevValues, ...nextValuesPatch }));
+  }
+
+  useEffect(() => {
+    Object.keys(values).forEach((key) => {
+      const value = values[key];
+      if (isPromise(value)) {
+        value.then((result) => {
+          if (values[key] === value) {
+            onChange({ [key]: result });
+          }
+        });
+      }
+    });
+    trackPromiseValues(values);
+  }, [values]);
+
   // An empty steps array is allowed, in which case there is nothing to render.
   if (!step) {
     return null;
@@ -164,6 +206,11 @@ function FormSteps({
    */
   function toNextStep(event) {
     event.preventDefault();
+
+    if (hasPendingPromiseValue(values)) {
+      // TBD: User feedback?
+      return;
+    }
 
     // Don't proceed if field errors have yet to be resolved.
     if (activeErrors.length && activeErrors.length > unknownFieldErrors.length) {
@@ -214,12 +261,7 @@ function FormSteps({
         key={name}
         value={values}
         errors={activeErrors}
-        onChange={(nextValuesPatch) => {
-          setActiveErrors((prevActiveErrors) =>
-            prevActiveErrors.filter(({ field }) => !(field in nextValuesPatch)),
-          );
-          setValues((prevValues) => ({ ...prevValues, ...nextValuesPatch }));
-        }}
+        onChange={onChange}
         registerField={(field, options = {}) => {
           if (!fields.current[field]) {
             fields.current[field] = {
