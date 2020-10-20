@@ -103,7 +103,7 @@ describe DocAuth::LexisNexis::LexisNexisClient do
     context 'when the results return failure' do
       it 'returns a FormResponse with failure' do
         stub_request(:post, image_upload_url).to_return(
-          body: LexisNexisFixtures.true_id_response_failure,
+          body: LexisNexisFixtures.true_id_response_failure_no_liveness,
         )
 
         result = subject.post_images(

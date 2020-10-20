@@ -6,7 +6,7 @@ describe DocAuth::LexisNexis::Responses::TrueIdResponse do
   let(:success_response) do
     instance_double(Faraday::Response, status: 200, body: success_response_body)
   end
-  let(:failure_response_body) { LexisNexisFixtures.true_id_response_failure }
+  let(:failure_response_body) { LexisNexisFixtures.true_id_response_failure_no_liveness }
   let(:failure_response) do
     instance_double(Faraday::Response, status: 200, body: failure_response_body)
   end
@@ -29,7 +29,7 @@ describe DocAuth::LexisNexis::Responses::TrueIdResponse do
   end
 
   context 'when response is not a success' do
-    it 'it produces appropriate errors' do
+    it 'it produces appropriate errors without liveness' do
       output = described_class.new(failure_response, false).to_h
       errors = output[:errors]
 
@@ -38,6 +38,17 @@ describe DocAuth::LexisNexis::Responses::TrueIdResponse do
       expect(errors[:general]).to contain_exactly(
         I18n.t('doc_auth.errors.lexis_nexis.general_error_no_liveness'),
       )
+    end
+
+    it 'it produces appropriate errors with liveness' do
+      output = described_class.new(failure_response, true).to_h
+      errors = output[:errors]
+
+      expect(output[:success]).to eq(false)
+      expect(errors.keys).to contain_exactly(:general)
+      expect(errors[:general]).to contain_exactly(
+                                    I18n.t('doc_auth.errors.lexis_nexis.general_error_liveness'),
+                                    )
     end
   end
 end
