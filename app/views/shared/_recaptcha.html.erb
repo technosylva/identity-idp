@@ -4,7 +4,7 @@
 
   <%= javascript_tag '', nonce: content_security_policy_script_nonce, src: 'https://www.google.com/recaptcha/api.js' %>
 
-  <%= nonced_javascript_tag do %>
+  <%= javascript_tag nonce: true do %>
     var onSubmit=function(token) {
       document.getElementById('g-recaptcha-response').value = token;
     };

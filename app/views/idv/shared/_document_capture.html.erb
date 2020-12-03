@@ -118,7 +118,7 @@
   <p class='mt3 mb0'><%= t('doc_auth.info.document_capture_upload_image') %></p>
 </div>
 <%= render 'idv/doc_auth/start_over_or_cancel' %>
-<%= nonced_javascript_tag do %>
+<%= javascript_tag nonce: true do %>
   <% asset_keys = [
     'close-white-alt.svg',
     'id-card.svg',

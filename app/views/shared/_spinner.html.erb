@@ -7,7 +7,7 @@
         alt: '') %>
   </div>
 </div>
-<%= nonced_javascript_tag do %>
+<%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
     const button = document.querySelector('.no-spinner');
     const info = document.querySelector('.spinner');
