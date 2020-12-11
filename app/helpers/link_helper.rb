@@ -12,12 +12,13 @@ module LinkHelper
 
     url = url_for(options)
     html_options[:href] ||= url
-    html_options[:class] ||= html_options[:class].to_s
     html_options[:target] = '_blank'
 
-    classes = html_options[:class].split(' ').append(EXTERNAL_LINK_CLASS)
-
-    html_options[:class] = classes.uniq.join(' ')
+    if html_options[:class].present? && !html_options.include?(EXTERNAL_LINK_CLASS)
+      html_options[:class] << ' ' << EXTERNAL_LINK_CLASS
+    else
+      html_options[:class] = EXTERNAL_LINK_CLASS
+    end
 
     if block_given?
       link_to(url, html_options) do
